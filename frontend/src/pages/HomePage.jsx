@@ -2,6 +2,7 @@ import React from 'react';
 import '../styles/HomePage.css';
 import Navbar from '../components/Navbar.jsx';
 import UploadForm from '../components/UploadForm.jsx';
+import About from '../components/About.jsx';
 
 const HomePage = () => {
     return (
@@ -10,9 +11,7 @@ const HomePage = () => {
             <div className="home-page-container">
                 <UploadForm />
             </div>
-            <div id="about">
-                <p>about section</p>
-            </div>
+            <About />
             <div id="team">
                 <p>team section</p>
             </div>
