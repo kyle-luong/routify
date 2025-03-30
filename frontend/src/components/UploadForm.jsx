@@ -65,7 +65,7 @@ const UploadForm = () => {
           Submit
         </button>
       </div>
-      {message && <p>{message}</p>} {/* Display success or error message */}
+      {message && <p>{message}</p>}
     </div>
   );
 };

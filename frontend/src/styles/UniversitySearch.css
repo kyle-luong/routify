@@ -6,6 +6,7 @@
   .university-input {
     width: 100%;
     padding: 8px;
+    font-size: large;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
