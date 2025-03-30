@@ -1,62 +1,93 @@
 .team-container {
-    padding: 60px 20px;
-    text-align: center;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    max-width: 1200px; 
-    margin: 0 auto;
-  }
-  
-  .team-header h1 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 30px;
-  }
-  
-  .team-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 30px;
-  }
-  
-  .team-cards {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-  }
-  
+  padding: 60px 20px;
+  text-align: center;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  max-width: 1200px;
+  margin: 40px auto;
+}
+
+.team-header h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.team-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.team-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.team-card {
+  background: #fff;
+  border: 2px solid #4282fe;
+  border-radius: 10px;
+  width: 250px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-10px);
+}
+
+.team-card-image img {
+  width: 100%;
+  height: 150px;
+  width: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+.team-card-info h3 {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.team-card-info p {
+  font-size: 1rem;
+  color: #888;
+}
+
+@media (max-width: 1024px) {
   .team-card {
-    background: #fff;
-    border: 2px solid #4282fe;
-    border-radius: 10px;
-    width: 250px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    width: 200px;
   }
-  
-  .team-card:hover {
-    transform: translateY(-10px);
+}
+
+@media (max-width: 768px) {
+  .team-card {
+    width: 180px;
   }
-  
-  .team-card-image img {
-    width: 100%;
-    height: 150px;
+
+  .team-content {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .team-card {
     width: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 15px;
   }
-  
-  .team-card-info h3 {
-    font-size: 1.2rem;
-    color: #333;
+
+  .team-content {
+    gap: 15px;
   }
-  
-  .team-card-info p {
-    font-size: 1rem;
-    color: #888;
-  }  
+
+  .team-header h1 {
+    font-size: 1.8rem;
+  }
+}
