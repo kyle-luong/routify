@@ -3,7 +3,7 @@ import './styles/App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import HomePage from './pages/HomePage.jsx'
-import SchedulePage from "./pages/SchedulePage";
+import SchedulePage from "./pages/SchedulePage.jsx";
 
 function App() {
   return (
