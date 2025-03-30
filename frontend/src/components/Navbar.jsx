@@ -6,6 +6,17 @@ const Navbar = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
+  const handleLinkClick = (e, target) => {
+    if (!isHomePage) {
+      e.preventDefault();
+      window.location.href = "/";
+      
+      window.addEventListener('load', () => {
+        document.getElementById(target)?.scrollIntoView({ behavior: "smooth" });
+      });
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="logo">
@@ -13,13 +24,13 @@ const Navbar = () => {
       </div>
       <ul className="nav-links">
         <li>
-          <Link to={isHomePage ? "#about" : "/#about"}>About</Link>
+          <a href="#about" onClick={(e) => handleLinkClick(e, 'about')}>About</a>
         </li>
         <li>
-          <Link to={isHomePage ? "#team" : "/#team"}>Team</Link>
+          <a href="#team" onClick={(e) => handleLinkClick(e, 'team')}>Team</a>
         </li>
         <li>
-          <Link to={isHomePage ? "#contact" : "/#contact"}>Contact</Link>
+          <a href="#contact" onClick={(e) => handleLinkClick(e, 'contact')}>Contact</a>
         </li>
       </ul>
     </nav>

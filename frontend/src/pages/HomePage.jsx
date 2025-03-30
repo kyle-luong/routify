@@ -3,6 +3,8 @@ import '../styles/HomePage.css';
 import Navbar from '../components/Navbar.jsx';
 import UploadForm from '../components/UploadForm.jsx';
 import About from '../components/About.jsx';
+import Team from '../components/Team.jsx';
+import Contact from '../components/Contact.jsx';
 
 const HomePage = () => {
     return (
@@ -12,12 +14,8 @@ const HomePage = () => {
                 <UploadForm />
             </div>
             <About />
-            <div id="team">
-                <p>team section</p>
-            </div>
-            <div id="contact">
-                <p>contact section</p>
-            </div>
+            <Team />
+            <Contact />
         </div>
     );
 };
