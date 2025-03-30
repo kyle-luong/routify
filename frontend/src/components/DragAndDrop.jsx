@@ -39,7 +39,7 @@ const DragAndDrop = ({ onFilesSelected, width = "100%", height = "200px" }) => {
           <div>
             <p>Drag and drop your files here</p>
             <p>
-              Supported files: .JPG, .PNG, .JPEG, .PDF, .DOCX, .PPTX, .TXT, .XLSX
+              Supported files: .ICS
             </p>
           </div>
         </div>
