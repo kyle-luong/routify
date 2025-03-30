@@ -30,6 +30,8 @@ const SchedulePage = () => {
     ? events.filter((event) => event.dayOfWeek.includes(selectedDay))
     : events;
 
+  const sortedEvents = [...filteredEvents].sort((a, b) => a.start.localeCompare(b.start));
+
   return (
     <>
       <Navbar />
@@ -37,10 +39,10 @@ const SchedulePage = () => {
       <div className="schedule-page">
         <div className="event-list">
           <h2>Your Schedule</h2>
-          {filteredEvents.length === 0 ? (
+          {sortedEvents.length === 0 ? (
             <p>No events found for {selectedDay || "selected day"}.</p>
           ) : (
-            filteredEvents.map((event, i) => (
+            sortedEvents.map((event, i) => (
               <div key={i} className="event-card">
                 <h4>{event.title}</h4>
                 <p>{event.location}</p>
