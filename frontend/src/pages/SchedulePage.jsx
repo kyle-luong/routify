@@ -42,10 +42,10 @@ const SchedulePage = () => {
     }
   };
 
-  // useEffect(() => {
-  //   setSelectedPair([null, null]);
-  //   setSelectedIndex(null);
-  // }, [selectedDay]);
+  useEffect(() => {
+    setSelectedPair([null, null]);
+    setSelectedIndex(null);
+  }, [selectedDay]);
 
   const segments =
     selectedPair[0] && selectedPair[1]
