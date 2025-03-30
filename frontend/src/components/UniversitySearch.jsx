@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../styles/UniversitySearch.css"; // Import the CSS file
+import "../styles/UniversitySearch.css";
 import universityData from "../assets/us_institutions.json";
 
 const UniversitySearch = () => {
@@ -34,7 +34,7 @@ const UniversitySearch = () => {
 
   const handleSelectUniversity = (university) => {
     setSearch(university.institution);
-    setShowDropdown(false); // Hide the dropdown after selection
+    setShowDropdown(false);
   };
 
   return (
