@@ -11,22 +11,18 @@ const SchedulePage = () => {
   const { short_id } = useParams();
   const [events, setEvents] = useState([]);
   const [selectedPair, setSelectedPair] = useState([null, null]);
+  const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
 
   useEffect(() => {
     api
       .get(`/api/view/${short_id}/`)
       .then((res) => {
-        setEvents(res.data.events);
+        const filtered = res.data.events.filter(event => event.latitude && event.longitude);
+        setEvents(filtered);
       })
       .catch((err) => console.error("Fetch error:", err));
   }, [short_id]);
-
-  const handleSelect = (index, role) => {
-    const newPair = [...selectedPair];
-    newPair[role] = events[index];
-    setSelectedPair(newPair);
-  };
 
   const filteredEvents = selectedDay
     ? events.filter((event) => event.dayOfWeek.includes(selectedDay))
@@ -35,7 +31,13 @@ const SchedulePage = () => {
   const sortedEvents = [...filteredEvents].sort((a, b) => a.start.localeCompare(b.start));
 
   const handleRouteSelect = (index) => {
-    if (index >= 0 && index < events.length - 1) {
+    if (selectedIndex === index) {
+      // Deselect
+      setSelectedIndex(null);
+      setSelectedPair([null, null]);
+    } else {
+      // Select new segment
+      setSelectedIndex(index);
       setSelectedPair([sortedEvents[index], sortedEvents[index + 1]]);
     }
   };
@@ -60,7 +62,10 @@ const SchedulePage = () => {
                 </div>
 
                 {i < sortedEvents.length - 1 && (
-                  <RouteSelect onSelect={() => handleRouteSelect(i)} />
+                  <RouteSelect
+                    isSelected={selectedIndex === i}
+                    onSelect={() => handleRouteSelect(i)}
+                  />
                 )}
               </React.Fragment>
             ))
@@ -75,9 +80,19 @@ const SchedulePage = () => {
               <strong>{selectedPair[1].title}</strong>
             </p>
           ) : (
-            <p>Select two courses to see the route here.</p>
+            <p>Showing all routes by default. Click a segment to view details.</p>
           )}
-          <MapboxMap />
+          <MapboxMap
+            segments={
+              selectedPair[0] && selectedPair[1]
+                ? [[selectedPair[0], selectedPair[1]]]
+                : sortedEvents
+                    .map((e, i, arr) =>
+                      i < arr.length - 1 ? [arr[i], arr[i + 1]] : null
+                    )
+                    .filter(Boolean)
+            }
+          />
         </div>
       </div>
     </>
