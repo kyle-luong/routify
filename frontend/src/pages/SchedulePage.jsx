@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar.jsx";
 import DaysOfTheWeekMenu from "../components/DaysOfTheWeekMenu";
 import RouteSelect from "../components/RouteSelect";
 import "../styles/SchedulePage.css";
+import MapboxMap from "../components/MapboxMap.jsx";
 
 const SchedulePage = () => {
   const { short_id } = useParams();
@@ -76,6 +77,7 @@ const SchedulePage = () => {
           ) : (
             <p>Select two courses to see the route here.</p>
           )}
+          <MapboxMap />
         </div>
       </div>
     </>
