@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import DragAndDrop from "./DragAndDrop";
 import UniversitySearch from "./UniversitySearch";
-import axios from "axios";
 import "../styles/UploadForm.css";
+import api from "../api";
+import { useNavigate } from "react-router-dom";
+
+
 
 const UploadForm = () => {
+  const navigate = useNavigate();
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectedUniversity, setSelectedUniversity] = useState("");
   const [message, setMessage] = useState(""); 
@@ -27,12 +31,12 @@ const UploadForm = () => {
     console.log("University:", selectedUniversity);
 
     const formData = new FormData();
-    selectedFiles.forEach((file) => formData.append("files", file));
-    formData.append("university", selectedUniversity);
+    selectedFiles.forEach((file) => formData.append("file", file));
+    formData.append("school_location", selectedUniversity);
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/upload`,
+      const response = await api.post(
+        `/api/upload/`,
         formData,
         {
           headers: {
@@ -42,6 +46,8 @@ const UploadForm = () => {
       );
       setMessage("File uploaded successfully!");
       console.log("Response:", response.data);
+      const shortId = response.data.short_id;
+      navigate(`/view/${shortId}`);
     } catch (error) {
       console.error("Error uploading file:", error);
       setMessage("Error uploading file.");
