@@ -10,6 +10,7 @@ from django.utils import timezone
 import calendar
 import os
 from dotenv import load_dotenv
+from django.http import HttpResponse
 
 from .models import Session, Event
 from .utils.hashids import encode_id, decode_id
@@ -141,3 +142,17 @@ class SessionEventsView(APIView):
             })
 
         return Response({ "events": result })
+    
+# for testing purposes:
+def home(request):
+    html = """
+    <html>
+      <head>
+        <title>Test Connection</title>
+      </head>
+      <body>
+        <h1>Django backend is alive and running</h1>
+      </body>
+    </html>
+    """
+    return HttpResponse(html)
