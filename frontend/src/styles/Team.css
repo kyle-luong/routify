@@ -64,6 +64,10 @@
   color: #ccc; 
 }
 
+.linkedin {
+  text-decoration: none;
+}
+
 @media (max-width: 1024px) {
   .team-card {
     width: 200px;

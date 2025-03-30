@@ -16,6 +16,18 @@ const Navbar = () => {
     });
   };
 
+  const handleAboutClick = (e) => {
+    e.preventDefault();
+    if (isHomePage) {
+      handleSmoothScroll(e, "about");
+    } else {
+      window.location.href = "/";
+      setTimeout(() => {
+        handleSmoothScroll(e, "about");
+      }, 200); 
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="logo">
@@ -23,7 +35,7 @@ const Navbar = () => {
       </div>
       <ul className="nav-links">
         <li>
-          <a href="#about" onClick={(e) => handleSmoothScroll(e, 'about')}>About</a>
+          <a href="#about" onClick={handleAboutClick}>About</a>
         </li>
         <li>
           <a href="#team" onClick={(e) => handleSmoothScroll(e, 'team')}>Team</a>

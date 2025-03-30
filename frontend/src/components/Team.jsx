@@ -19,10 +19,13 @@ const Team = () => {
                 alt="Pratik Shrestha"
               />
             </div>
-            <div className="team-card-info">
-              <h3>Pratik Shrestha</h3>
-              <p>DevOps Engineer</p>
-            </div>
+            <a className="linkedin" href="https://www.linkedin.com/in/pishrestha/">
+              <div className="team-card-info">
+                <h3>Pratik Shrestha</h3>
+                <p>DevOps Engineer</p>
+              </div>            
+            </a>
+
           </div>
 
           <div className="team-card">
@@ -32,10 +35,12 @@ const Team = () => {
                 alt="Kyle Luong"
               />
             </div>
-            <div className="team-card-info">
-              <h3>Kyle Luong</h3>
-              <p>Lead Developer</p>
-            </div>
+              <a className="linkedin" href="https://www.linkedin.com/in/kylewl/">
+                <div className="team-card-info">
+                  <h3>Kyle Luong</h3>
+                  <p>Lead Developer</p>
+                </div>
+              </a>
           </div>
 
           <div className="team-card">
@@ -45,10 +50,12 @@ const Team = () => {
                 alt="Jonathan Lam"
               />
             </div>
-            <div className="team-card-info">
-              <h3>Jonathan Lam</h3>
-              <p>Frontend Engineer</p>
-            </div>
+              <a className="linkedin" href="https://www.linkedin.com/in/jonathanlam2/">
+                <div className="team-card-info">
+                  <h3>Jonathan Lam</h3>
+                  <p>Frontend Engineer</p>
+                </div>
+              </a>
           </div>
         </div>
       </div>
