@@ -1,5 +1,3 @@
-/* Inspired from https://medium.com/@dprincecoder/creating-a-drag-and-drop-file-upload-component-in-react-a-step-by-step-guide-4d93b6cc21e0 */
-
 import React, { useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { MdClear } from "react-icons/md";
@@ -10,20 +8,23 @@ const DragAndDrop = ({ onFilesSelected, width = "100%", height = "200px" }) => {
 
   const handleDrop = (event) => {
     event.preventDefault();
-    const droppedFiles = event.dataTransfer.files;
-    if (droppedFiles.length > 0) {
-      const newFiles = Array.from(droppedFiles);
-      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    }
+    const droppedFiles = Array.from(event.dataTransfer.files);
+    setFiles((prevFiles) => [...prevFiles, ...droppedFiles]);
   };
 
   const handleRemoveFile = (index) => {
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    const updatedFiles = files.filter((_, i) => i !== index);
+    setFiles(updatedFiles);
+  };
+
+  const handleFileInput = (event) => {
+    const selectedFiles = Array.from(event.target.files);
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
   };
 
   useEffect(() => {
     if (onFilesSelected) {
-      onFilesSelected(files);
+      onFilesSelected(files); // Pass files up to parent
     }
   }, [files, onFilesSelected]);
 
@@ -34,15 +35,14 @@ const DragAndDrop = ({ onFilesSelected, width = "100%", height = "200px" }) => {
         onDrop={handleDrop}
         onDragOver={(event) => event.preventDefault()}
       >
-        <div className="upload-info">
+        <input type="file" multiple onChange={handleFileInput} style={{ display: "none" }} id="fileInput" />
+        <label htmlFor="fileInput" className="upload-info">
           <AiOutlineCloudUpload />
           <div>
-            <p>Drag and drop your files here</p>
-            <p>
-              Supported files: .ICS
-            </p>
+            <p>Drag and drop your files here or click to upload</p>
+            <p>Supported files: .ICS</p>
           </div>
-        </div>
+        </label>
 
         {files.length > 0 && (
           <div className="file-list">

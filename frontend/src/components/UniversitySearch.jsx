@@ -2,19 +2,15 @@ import React, { useState, useEffect } from "react";
 import "../styles/UniversitySearch.css";
 import universityData from "../assets/us_institutions.json";
 
-const UniversitySearch = () => {
+const UniversitySearch = ({ onUniversitySelect }) => {
   const [universities, setUniversities] = useState([]);
   const [filteredUniversities, setFilteredUniversities] = useState([]);
   const [search, setSearch] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    const fetchUniversities = async () => {
-      setUniversities(universityData);
-      setFilteredUniversities(universityData);
-    };
-
-    fetchUniversities();
+    setUniversities(universityData);
+    setFilteredUniversities(universityData);
   }, []);
 
   const handleSearchChange = (event) => {
@@ -35,6 +31,9 @@ const UniversitySearch = () => {
   const handleSelectUniversity = (university) => {
     setSearch(university.institution);
     setShowDropdown(false);
+    if (onUniversitySelect) {
+      onUniversitySelect(university.institution);
+    }
   };
 
   return (
