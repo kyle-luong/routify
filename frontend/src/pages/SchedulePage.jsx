@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api";
 import Navbar from "../components/Navbar.jsx";
+import DaysOfTheWeekMenu from "../components/DaysOfTheWeekMenu";
 import "../styles/SchedulePage.css";
 
 const SchedulePage = () => {
   const { short_id } = useParams();
   const [events, setEvents] = useState([]);
   const [selectedPair, setSelectedPair] = useState([null, null]);
+  const [selectedDay, setSelectedDay] = useState(null);
 
   useEffect(() => {
     api
@@ -24,16 +26,21 @@ const SchedulePage = () => {
     setSelectedPair(newPair);
   };
 
+  const filteredEvents = selectedDay
+    ? events.filter((event) => event.dayOfWeek.includes(selectedDay))
+    : events;
+
   return (
     <>
       <Navbar />
+      <DaysOfTheWeekMenu selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
       <div className="schedule-page">
         <div className="event-list">
           <h2>Your Schedule</h2>
-          {events.length === 0 ? (
-            <p>No events found.</p>
+          {filteredEvents.length === 0 ? (
+            <p>No events found for {selectedDay || "selected day"}.</p>
           ) : (
-            events.map((event, i) => (
+            filteredEvents.map((event, i) => (
               <div key={i} className="event-card">
                 <h4>{event.title}</h4>
                 <p>{event.location}</p>

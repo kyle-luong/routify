@@ -1,0 +1,26 @@
+.days-menu {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+  
+  .days-menu button {
+    font-size: 16px;
+    padding: 10px 15px;
+    border: none;
+    background: #ddd;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+  }
+  
+  .days-menu button:hover {
+    background: #bbb;
+  }
+  
+  .days-menu .active {
+    background: #007bff;
+    color: white;
+  }  
