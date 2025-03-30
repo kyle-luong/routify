@@ -1,0 +1,23 @@
+.route-select-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 8px 0;
+    cursor: pointer;
+  }
+  
+  .route-select-circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #007bff;
+    transition: all 0.2s ease;
+  }
+  
+  .route-select-circle.filled {
+    background-color: #007bff;
+  }
+  
+  .route-select-circle.hollow {
+    background-color: white;
+  }  

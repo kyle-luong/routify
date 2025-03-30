@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import api from "../api";
 import Navbar from "../components/Navbar.jsx";
 import DaysOfTheWeekMenu from "../components/DaysOfTheWeekMenu";
+import RouteSelect from "../components/RouteSelect";
 import "../styles/SchedulePage.css";
 
 const SchedulePage = () => {
@@ -32,6 +33,12 @@ const SchedulePage = () => {
 
   const sortedEvents = [...filteredEvents].sort((a, b) => a.start.localeCompare(b.start));
 
+  const handleRouteSelect = (index) => {
+    if (index >= 0 && index < events.length - 1) {
+      setSelectedPair([sortedEvents[index], sortedEvents[index + 1]]);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -43,16 +50,18 @@ const SchedulePage = () => {
             <p>No events found for {selectedDay || "selected day"}.</p>
           ) : (
             sortedEvents.map((event, i) => (
-              <div key={i} className="event-card">
-                <h4>{event.title}</h4>
-                <p>{event.location}</p>
-                <p>{event.dayOfWeek.join(", ")}</p>
-                <p>{event.start} – {event.end}</p>
-                <div className="selection-buttons">
-                  <button onClick={() => handleSelect(i, 0)}>Set as Start</button>
-                  <button onClick={() => handleSelect(i, 1)}>Set as End</button>
+              <React.Fragment key={i}>
+                <div className="event-card">
+                  <h4>{event.title}</h4>
+                  <p>{event.location}</p>
+                  <p>{event.dayOfWeek.join(", ")}</p>
+                  <p>{event.start} – {event.end}</p>
                 </div>
-              </div>
+
+                {i < sortedEvents.length - 1 && (
+                  <RouteSelect onSelect={() => handleRouteSelect(i)} />
+                )}
+              </React.Fragment>
             ))
           )}
         </div>
