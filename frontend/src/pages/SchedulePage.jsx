@@ -42,13 +42,25 @@ const SchedulePage = () => {
     }
   };
 
+  // useEffect(() => {
+  //   setSelectedPair([null, null]);
+  //   setSelectedIndex(null);
+  // }, [selectedDay]);
+
+  const segments =
+    selectedPair[0] && selectedPair[1]
+      ? [[selectedPair[0], selectedPair[1]]]
+      : sortedEvents
+          .map((e, i, arr) => (i < arr.length - 1 ? [arr[i], arr[i + 1]] : null))
+          .filter(Boolean);
+
   return (
     <>
       <Navbar />
       <DaysOfTheWeekMenu selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
       <div className="schedule-page">
         <div className="event-list">
-          <h2>Your Schedule</h2>
+          <h1>Your Schedule</h1>
           {sortedEvents.length === 0 ? (
             <p>No events found for {selectedDay || "selected day"}.</p>
           ) : (
@@ -73,25 +85,11 @@ const SchedulePage = () => {
         </div>
 
         <div className="map-preview">
-          <h3>Selected Route</h3>
-          {selectedPair[0] && selectedPair[1] ? (
-            <p>
-              From <strong>{selectedPair[0].title}</strong> to{" "}
-              <strong>{selectedPair[1].title}</strong>
-            </p>
-          ) : (
-            <p>Showing all routes by default. Click a segment to view details.</p>
-          )}
           <MapboxMap
-            segments={
-              selectedPair[0] && selectedPair[1]
-                ? [[selectedPair[0], selectedPair[1]]]
-                : sortedEvents
-                    .map((e, i, arr) =>
-                      i < arr.length - 1 ? [arr[i], arr[i + 1]] : null
-                    )
-                    .filter(Boolean)
-            }
+            key={`map-${selectedDay || "all"}-${selectedIndex ?? "none"}`}
+            segments={selectedDay ? segments : []}
+            selectedPair={selectedPair}
+            selectedDay={selectedDay}
           />
         </div>
       </div>
