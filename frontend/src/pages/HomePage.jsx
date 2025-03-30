@@ -7,7 +7,18 @@ const HomePage = () => {
     return (
         <div className="home-page">
             <Navbar />
-            <UploadForm />
+            <div className="home-page-container">
+                <UploadForm />
+            </div>
+            <div id="about">
+                <p>about section</p>
+            </div>
+            <div id="team">
+                <p>team section</p>
+            </div>
+            <div id="contact">
+                <p>contact section</p>
+            </div>
         </div>
     );
 };

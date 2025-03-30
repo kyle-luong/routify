@@ -12,7 +12,7 @@ function App() {
           <Routes>
             {/* root page directs to home page */}
             <Route path="/" element={<HomePage />} />
-            <Route path="/view/:short_id" element={<SchedulePage />} />                        
+            <Route path="/view/:short_id" element={<SchedulePage />} />
           </Routes>
         </Router>
     </div>
