@@ -1,7 +1,7 @@
 import React from "react";
 import DragAndDrop from "./DragAndDrop";
 import UniversitySearch from "./UniversitySearch";
-import "../styles/UploadForm.css"; // Import the CSS file
+import "../styles/UploadForm.css";
 
 const UploadForm = () => {
     return (
@@ -11,7 +11,7 @@ const UploadForm = () => {
             </div>
             <div className="university-search-container">
                 <UniversitySearch />
-                <button className="upload-button">this is the upload form submit button!</button>
+                <button className="upload-button">Submit</button>
             </div>
         </div>
     );
