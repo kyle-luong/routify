@@ -11,7 +11,20 @@ const HomePage = () => {
         <div className="home-page">
             <Navbar />
             <div className="home-page-container">
-                <UploadForm />
+                <div className="animated-title">
+                    <div className="text-top">
+                        <div>
+                            <span>rethink</span>
+                            <span>your course scheduling</span>
+                        </div>
+                    </div>
+                    <div className="text-bottom">
+                        <div>experience.</div>
+                    </div>
+                </div>
+                <div className="upload-form">
+                    <UploadForm />
+                </div>
             </div>
             <About />
             <Team />
