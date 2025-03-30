@@ -1,3 +1,19 @@
 html {
     scroll-behavior: smooth;
 }
+
+.home-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #2b2b2b;
+  }
+
+.home-page-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}

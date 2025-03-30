@@ -6,15 +6,14 @@ const Navbar = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
-  const handleLinkClick = (e, target) => {
-    if (!isHomePage) {
-      e.preventDefault();
-      window.location.href = "/";
-      
-      window.addEventListener('load', () => {
-        document.getElementById(target)?.scrollIntoView({ behavior: "smooth" });
-      });
-    }
+  const handleSmoothScroll = (e, targetId) => {
+    e.preventDefault();
+    const targetElement = document.getElementById(targetId);
+    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+    window.scrollTo({
+      top: targetElement.offsetTop - navbarHeight,
+      behavior: 'smooth'
+    });
   };
 
   return (
@@ -24,13 +23,13 @@ const Navbar = () => {
       </div>
       <ul className="nav-links">
         <li>
-          <a href="#about" onClick={(e) => handleLinkClick(e, 'about')}>About</a>
+          <a href="#about" onClick={(e) => handleSmoothScroll(e, 'about')}>About</a>
         </li>
         <li>
-          <a href="#team" onClick={(e) => handleLinkClick(e, 'team')}>Team</a>
+          <a href="#team" onClick={(e) => handleSmoothScroll(e, 'team')}>Team</a>
         </li>
         <li>
-          <a href="#contact" onClick={(e) => handleLinkClick(e, 'contact')}>Contact</a>
+          <a href="#contact" onClick={(e) => handleSmoothScroll(e, 'contact')}>Contact</a>
         </li>
       </ul>
     </nav>

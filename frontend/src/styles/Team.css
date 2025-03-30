@@ -1,15 +1,16 @@
 .team-container {
   padding: 60px 20px;
   text-align: center;
-  background-color: #f7f7f7;
+  background-color: #1e1e1e; 
   border-radius: 8px;
   max-width: 1200px;
   margin: 40px auto;
+  color: #f7f7f7; 
 }
 
 .team-header h1 {
   font-size: 2.5rem;
-  color: #333;
+  color: #f7f7f7;
   margin-bottom: 30px;
 }
 
@@ -29,14 +30,15 @@
 }
 
 .team-card {
-  background: #fff;
-  border: 2px solid #4282fe;
+  background: #2b2b2b; 
+  border: 2px solid #666; 
   border-radius: 10px;
   width: 250px;
   padding: 20px;
   text-align: center;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); 
   transition: transform 0.3s ease;
+  color: #f7f7f7; 
 }
 
 .team-card:hover {
@@ -53,13 +55,13 @@
 }
 
 .team-card-info h3 {
-  font-size: 1.2rem;
-  color: #333;
+  font-size: 1.7rem;
+  color: #e57200;
 }
 
 .team-card-info p {
   font-size: 1rem;
-  color: #888;
+  color: #ccc; 
 }
 
 @media (max-width: 1024px) {
