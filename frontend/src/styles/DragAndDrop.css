@@ -1,12 +1,18 @@
 .drag-drop {
-  background: #fff;
-  border: 1px solid var(--border-color);
+  background: #f4fbff; 
+  border: 2px dashed #4282fe; 
   border-radius: 8px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  transition: all 0.3s ease-in-out;
+  margin-bottom: 10px;
 }
 
 .document-uploader {
-  border: 2px dashed #4282fe;
   background-color: #f4fbff;
   padding: 1rem;
   max-height: 60vh; 
@@ -19,12 +25,8 @@
   border-radius: 8px;
   cursor: pointer;
   width: 100%;
-  box-sizing: border-box; 
+  box-sizing: border-box;
   transition: all 0.3s ease-in-out;
-}
-
-.document-uploader.active {
-  border-color: #6dc24b;
 }
 
 .upload-info {
