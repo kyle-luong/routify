@@ -5,7 +5,7 @@ import "../styles/MapboxMap.css";
 import MapStyleSelector from "./MapStyleSelector";
 import DirectionInfo from "./DirectionInfo";
 
-mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 const colorPalette = [
   "#f94144",

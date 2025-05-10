@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:700');
+
 html {
   scroll-behavior: smooth;
 }
@@ -19,12 +21,10 @@ html {
   box-sizing: border-box;
 }
 
-@import url('https://fonts.googleapis.com/css?family=Roboto:700');
-
 @keyframes showTopText {
-0% { transform: translate3d(0, 100%, 0); }
-40%, 60% { transform: translate3d(0, 50%, 0); }
-100% { transform: translate3d(0, 0, 0); }
+  0% { transform: translate3d(0, 100%, 0); }
+  40%, 60% { transform: translate3d(0, 50%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
 }
 
 @keyframes showBottomText {
