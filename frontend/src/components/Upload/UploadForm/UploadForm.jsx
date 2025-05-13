@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import DragAndDrop from "./DragAndDrop";
-import UniversitySearch from "./UniversitySearch";
-import "../styles/UploadForm.css";
-import api from "../api";
+import DragAndDrop from "../../Upload/DragAndDrop/DragAndDrop";
+import UniversitySearch from "../../UniversitySearch/UniversitySearch";
+import "./UploadForm.css";
+import api from "../../../api";
 import { useNavigate } from "react-router-dom";
 
 

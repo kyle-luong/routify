@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/DaysOfTheWeekMenu.css";
+import "./DaysOfTheWeekMenu.css";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 

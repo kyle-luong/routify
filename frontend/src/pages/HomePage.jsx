@@ -1,10 +1,10 @@
 import React from 'react';
 import '../styles/HomePage.css';
-import Navbar from '../components/Navbar.jsx';
-import UploadForm from '../components/UploadForm.jsx';
-import About from '../components/About.jsx';
-import Team from '../components/Team.jsx';
-import Contact from '../components/Contact.jsx';
+import Navbar from '../components/Navbar/Navbar.jsx';
+import UploadForm from '../components/Upload/UploadForm/UploadForm.jsx';
+import About from '../components/About/About.jsx';
+import Team from '../components/Team/Team.jsx';
+import Contact from '../components/Contact/Contact.jsx';
 
 const HomePage = () => {
     return (

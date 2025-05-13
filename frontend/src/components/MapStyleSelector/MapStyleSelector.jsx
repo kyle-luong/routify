@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/MapboxMap.css";
+import "../MapboxMap/MapboxMap.css";
 
 const MapStyleSelector = ({ mapStyle, onStyleChange }) => {
   return (

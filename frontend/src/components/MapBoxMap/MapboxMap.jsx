@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import "../styles/MapboxMap.css";
-import MapStyleSelector from "./MapStyleSelector";
-import DirectionInfo from "./DirectionInfo";
+import "./MapboxMap.css";
+import MapStyleSelector from "../MapStyleSelector/MapStyleSelector";
+import DirectionInfo from "../DirectionInfo/DirectionInfo";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -34,7 +34,7 @@ const MapboxMap = ({ segments, selectedPair = [null, null] }) => {
       zoom: 17,
       pitch: 60,
       bearing: 25,
-      maxPitch: 60, 
+      maxPitch: 60,
       dragRotate: true,
       interactive: true,
     });
@@ -192,7 +192,7 @@ const MapboxMap = ({ segments, selectedPair = [null, null] }) => {
         <div className="no-routes-overlay">
           <p>Please select a day to view routes.</p>
         </div>
-      )}  
+      )}
       <div ref={mapContainerRef} className="mapbox-map" />
       <DirectionInfo info={directionInfo} />
     </div>

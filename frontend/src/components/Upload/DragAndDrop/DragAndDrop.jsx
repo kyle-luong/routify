@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { MdClear } from "react-icons/md";
-import "../styles/DragAndDrop.css";
+import "./DragAndDrop.css";
 
 const DragAndDrop = ({ onFilesSelected, width = "100%", height = "200px" }) => {
   const [files, setFiles] = useState([]);

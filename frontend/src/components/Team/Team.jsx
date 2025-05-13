@@ -1,8 +1,8 @@
 import React from "react";
-import "../styles/Team.css";
-import Jonathan from "../assets/jonathan_lam.jpg"
-import Kyle from "../assets/kyle_luong.jpeg";
-import Pratik from "../assets/pratik_shrestha.jpg";
+import "./Team.css";
+import Jonathan from "../../assets/jonathan_lam.jpg"
+import Kyle from "../../assets/kyle_luong.jpeg";
+import Pratik from "../../assets/pratik_shrestha.jpg";
 
 const Team = () => {
   return (

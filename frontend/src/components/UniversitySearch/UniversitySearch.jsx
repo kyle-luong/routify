@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "../styles/UniversitySearch.css";
-import universityData from "../assets/us_institutions.json";
+import "./UniversitySearch.css";
+import universityData from "../../assets/us_institutions.json";
 
 const UniversitySearch = ({ onUniversitySelect }) => {
   const [universities, setUniversities] = useState([]);
