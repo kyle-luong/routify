@@ -36,7 +36,7 @@ npm run dev
 
 ### Environment variables
 
-Create a .env file in both backend/ and frontend/ based on .env.example.
+Create a .env file in both `backend/` and `frontend/` based on .env.example.
 
 ### Database
 
