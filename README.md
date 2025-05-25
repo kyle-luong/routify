@@ -6,6 +6,7 @@ A calendar visualizer that parses `.ics` files, geocodes event locations, and di
 
 - **Frontend:** React, Vite, Tailwind CSS
 - **Backend:** FastAPI, SQLModel
+- **Database:** PostgreSQL (via Docker)
 
 ### Features
 
@@ -40,4 +41,14 @@ Create a .env file in both `backend/` and `frontend/` based on .env.example.
 
 ### Database
 
-A SQLite database (`app/database.db`) is auto-generated at runtime using SQLModel. No setup or migration required.
+A Postgres database is required for development. Make sure to set the `DATABASE_URL` in your `backend/.env` file. You can run Postgres locally using the provided `docker-compose.yml`:
+
+```bash
+# Start a local Postgres instance
+docker compose up -d
+
+# Stop and remove the instance and its data
+docker compose down --volumes
+```
+
+If `DATABASE_URL` is not set, the app falls back to a local SQLite database at `app/database.db`, with no setup required.
