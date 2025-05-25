@@ -10,7 +10,7 @@ export default function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/:short_id" element={<SchedulePage />} />
+          <Route path="/view/:short_id" element={<SchedulePage />} />
         </Routes>
       </Layout>
     </Router>

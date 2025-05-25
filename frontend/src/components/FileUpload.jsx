@@ -52,7 +52,7 @@ export default function FileUpload() {
         </button>
 
         <button
-          onClick={() => navigate(`${shortId}`)}
+          onClick={() => navigate(`/view/${shortId}`)}
           disabled={!shortId || isUploading}
           className="w-full rounded-md bg-slate-900 px-6 py-3 text-base font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
         >

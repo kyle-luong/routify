@@ -3,7 +3,7 @@ import { FiLink } from 'react-icons/fi';
 
 export default function ShareableLink({ shortId }) {
   const [copied, setCopied] = useState(false);
-  const shareUrl = `${window.location.origin}/${shortId}`;
+  const shareUrl = `${window.location.origin}/view/${shortId}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl);
