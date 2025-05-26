@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Routify Upload</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-slate-50 text-slate-900 font-sans w-[500px] flex-col pt-14">
+    <!-- Navbar-style Header -->
+    <header
+      class="fixed top-0 left-0 right-0 border-b border-slate-200 bg-white z-10"
+    >
+      <div class="flex h-12 items-center justify-between px-6">
+        <span class="text-base font-semibold text-slate-900">Routify</span>
+        <span class="text-xs text-slate-500 whitespace-nowrap truncate">
+          Map your schedule. Share your day.
+        </span>
+      </div>
+    </header>
+
+    <!-- Main Card Container -->
+    <div
+      class="w-full max-w-[460px] rounded-xl bg-white px-6 py-5 shadow-sm mt-2 mb-4 mx-4"
+    >
+      <!-- Hidden File Input -->
+      <input type="file" id="icsFile" accept=".ics" class="hidden" />
+
+      <!-- Button Row with "or" separator -->
+      <div class="mb-2 flex items-center justify-between gap-2">
+        <button
+          disabled
+          class="flex-1 rounded-md bg-slate-100 px-4 py-2 text-sm font-medium text-slate-400 text-center cursor-not-allowed"
+        >
+          Scan site
+        </button>
+
+        <span class="text-xs text-slate-400 font-medium">or</span>
+
+        <button
+          id="uploadBtn"
+          class="flex-1 rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Upload .ics
+        </button>
+      </div>
+
+      <!-- File Feedback -->
+      <div
+        id="feedback"
+        class="mb-3 text-center text-sm text-slate-500 min-h-[1.25rem]"
+      ></div>
+
+      <!-- Divider -->
+      <hr class="border-slate-200 mb-3" />
+
+      <!-- See your map Button -->
+      <button
+        id="linkBtn"
+        disabled
+        class="mb-3 w-full rounded-md bg-slate-100 px-6 py-3 text-sm font-medium text-slate-400 text-center transition cursor-not-allowed"
+      >
+        See your map
+      </button>
+
+      <!-- Sharable Link Box -->
+      <div
+        id="shareableLink"
+        class="w-full rounded-md bg-slate-100 px-3 py-2 text-sm text-slate-400 border border-slate-200 cursor-not-allowed transition"
+      >
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 overflow-hidden">
+            <!-- Link icon -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M13.828 10.172a4 4 0 010 5.656l-1.414 1.414a4 4 0 01-5.656-5.656l1.414-1.414m3.536 3.536a4 4 0 005.656-5.656l-1.414-1.414a4 4 0 00-5.656 5.656l1.414 1.414z"
+              />
+            </svg>
+            <span id="shareUrl" class="truncate">No link yet</span>
+          </div>
+          <div class="ml-3 shrink-0">
+            <button
+              id="copyBtn"
+              disabled
+              class="text-sm font-medium text-slate-400 hover:underline cursor-not-allowed"
+            >
+              Copy
+            </button>
+            <span id="copiedMsg" class="font-medium text-sky-600 hidden">
+              Link copied!
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
