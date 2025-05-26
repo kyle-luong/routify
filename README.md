@@ -35,6 +35,18 @@ npm install
 npm run dev
 ```
 
+### Extension setup
+
+During development, compile Tailwind CSS into `styles.css` with:
+
+```bash
+cd ../routify-extension
+npm install
+npx tailwindcss -i ./tailwind.css -o ./styles.css --minify --watch
+```
+
+To run this extension in Chrome, open `chrome://extensions`, enable Developer Mode, and click Load unpacked to select the `routify-extension/` folder. Firefox is not supported. Only `popup.html`, `popup.js`, `styles.css`, and `manifest.json` are needed to run the extension.
+
 ### Environment variables
 
 Create a .env file in both `backend/` and `frontend/` based on .env.example.
