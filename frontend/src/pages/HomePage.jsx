@@ -1,4 +1,5 @@
 import FileUpload from '../components/FileUpload';
+import MapBox from '../components/MapBox';
 
 export default function HomePage() {
   return (
@@ -23,7 +24,7 @@ export default function HomePage() {
         {/* Right Side: Map Preview */}
         <div className="flex items-center justify-center">
           <div className="flex h-[440px] w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500">
-            Map preview
+            <MapBox />
           </div>
         </div>
       </div>

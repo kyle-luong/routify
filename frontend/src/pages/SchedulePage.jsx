@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import ScheduleHeader from '../components/ScheduleHeader';
 import ScheduleList from '../components/ScheduleList';
 import ShareableLink from '../components/ShareableLink';
+import MapBox from '../components/MapBox';
 
 export default function SchedulePage() {
   const { short_id } = useParams();
@@ -13,12 +14,21 @@ export default function SchedulePage() {
   const [timeFormat, setTimeFormat] = useState('12h');
   const [transportMode, setTransportMode] = useState('walking');
 
+  // API Error Handling
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetch(`/api/sessions/${short_id}`)
       .then((res) => res.json())
       .then((data) => {
         const filtered = data.events.filter((e) => e.latitude && e.longitude);
         setEvents(filtered);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Failed to load events.");
+        setLoading(false);
       });
   }, [short_id]);
 
@@ -54,7 +64,17 @@ export default function SchedulePage() {
         {/* Right: Map placeholder */}
         <div className="flex h-full items-center justify-center">
           <div className="flex h-[440px] w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500">
-            Map preview
+          {loading && <div>Loading...</div>}
+          {error && <div>{error}</div>}
+          {/* MapBox isn't rendered until the data is fully loaded */}
+          {!loading && !error && (
+            <MapBox
+              key={selectedDate.toISOString()}
+              segments={filteredEvents}
+              selectedPair={[null, null]}
+              selectedDay={selectedDate}
+            />
+          )}
           </div>
         </div>
       </div>

@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.87e165ed.css",
+    "main.js": "/static/js/main.b0797f25.js",
+    "static/media/kyle_luong.jpeg": "/static/media/kyle_luong.b87d1729fae17d37d31a.jpeg",
+    "static/media/jonathan_lam.jpg": "/static/media/jonathan_lam.ba30e8dd3bb502dc72e2.jpg",
+    "index.html": "/index.html",
+    "main.87e165ed.css.map": "/static/css/main.87e165ed.css.map",
+    "main.b0797f25.js.map": "/static/js/main.b0797f25.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.87e165ed.css",
+    "static/js/main.b0797f25.js"
+  ]
+}
