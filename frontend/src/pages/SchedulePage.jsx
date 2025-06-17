@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { isSameDay, parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 
+import MapBox from '../components/map/MapBox';
 import ScheduleHeader from '../components/ScheduleHeader';
 import ScheduleList from '../components/ScheduleList';
 import ShareableLink from '../components/ShareableLink';
-import MapBox from '../components/MapBox';
 
 export default function SchedulePage() {
   const { short_id } = useParams();
@@ -27,7 +27,7 @@ export default function SchedulePage() {
         setLoading(false);
       })
       .catch((err) => {
-        setError("Failed to load events.");
+        setError('Failed to load events.');
         setLoading(false);
       });
   }, [short_id]);
@@ -36,6 +36,11 @@ export default function SchedulePage() {
     .map((e) => ({ ...e, date: parseISO(e.start_date) }))
     .filter((e) => isSameDay(e.date, selectedDate))
     .sort((a, b) => a.start.localeCompare(b.start));
+
+  const segments = [];
+  for (let i = 0; i < filteredEvents.length - 1; i++) {
+    segments.push([filteredEvents[i], filteredEvents[i + 1]]);
+  }
 
   return (
     <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-slate-50 px-4 md:px-8">
@@ -64,17 +69,12 @@ export default function SchedulePage() {
         {/* Right: Map placeholder */}
         <div className="flex h-full items-center justify-center">
           <div className="flex h-[440px] w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500">
-          {loading && <div>Loading...</div>}
-          {error && <div>{error}</div>}
-          {/* MapBox isn't rendered until the data is fully loaded */}
-          {!loading && !error && (
-            <MapBox
-              key={selectedDate.toISOString()}
-              segments={filteredEvents}
-              selectedPair={[null, null]}
-              selectedDay={selectedDate}
-            />
-          )}
+            {loading && <div>Loading...</div>}
+            {error && <div>{error}</div>}
+            {/* MapBox isn't rendered until the data is fully loaded */}
+            {!loading && !error && (
+              <MapBox segments={segments} selectedPair={[null, null]} selectedDay={selectedDate} />
+            )}
           </div>
         </div>
       </div>

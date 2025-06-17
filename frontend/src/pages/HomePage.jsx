@@ -1,5 +1,5 @@
 import FileUpload from '../components/FileUpload';
-import MapBox from '../components/MapBox';
+import MapBox from '../components/map/MapBox';
 
 export default function HomePage() {
   return (
