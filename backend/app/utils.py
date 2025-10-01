@@ -40,14 +40,27 @@ def parse_ics(file_content, school_location):
         if until_date:
             end_date = until_date
 
-        location_key = f"{event.location}, {school_location} university"
+        # Keep original location
+        original_location = event.location or ""
+
+        # Clean for geocoding
+        cleaned_location = original_location
+        if cleaned_location:
+            import re
+            cleaned_location = re.sub(r'[^a-zA-Z\s,.-]+$', '', cleaned_location).strip()
+
+        location_key = f"{cleaned_location}, {school_location}"
+        if 'physics' in location_key.lower():
+                location_key = '382 McCormick Rd, Charlottesville, VA 22904, USA'
 
         # Cache geocoding
         if location_key in location_cache:
             lat, lng = location_cache[location_key]
         else:
             try:
+                print(f"Geocoding: {location_key}")
                 geo = gmaps.geocode(location_key)
+                print(f"Geocode result: {geo}")
                 if geo:
                     lat = geo[0]["geometry"]["location"]["lat"]
                     lng = geo[0]["geometry"]["location"]["lng"]
@@ -55,6 +68,7 @@ def parse_ics(file_content, school_location):
                     lat = lng = None
             except Exception:
                 lat = lng = None
+                print(f"Geocoding failed for: {location_key}")
             location_cache[location_key] = (lat, lng)
 
         current = start_date
