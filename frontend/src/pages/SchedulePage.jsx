@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { isSameDay, parseISO } from 'date-fns';
+import { useEffect, useMemo, useState } from 'react';
+import { format, isSameDay, parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 
 import MapBox from '../components/map/MapBox';
@@ -9,38 +9,89 @@ import ShareableLink from '../components/ShareableLink';
 
 export default function SchedulePage() {
   const { short_id } = useParams();
-  const [events, setEvents] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [events, setEvents] = useState([]); // all events (with coords only for map use)
+  const [selectedDate, setSelectedDate] = useState(null);
   const [timeFormat, setTimeFormat] = useState('12h');
   const [transportMode, setTransportMode] = useState('walking');
-
-  // API Error Handling
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch session events
   useEffect(() => {
+    if (!short_id) return;
+
+    setLoading(true);
+    setError(null);
+
     fetch(`/api/sessions/${short_id}`)
       .then((res) => res.json())
       .then((data) => {
-        const filtered = data.events.filter((e) => e.latitude && e.longitude);
-        setEvents(filtered);
+        const raw = Array.isArray(data.events) ? data.events : [];
+
+        // Keep only events that have coordinates for map purposes
+        const withCoords = raw.filter((e) => e.latitude && e.longitude);
+
+        setEvents(withCoords);
+
+        // Determine which date to auto-select
+        const todayStr = format(new Date(), 'yyyy-MM-dd');
+        const eventDateSet = new Set(withCoords.map((e) => e.start_date));
+
+        let targetDateStr = null;
+
+        if (eventDateSet.has(todayStr)) {
+          targetDateStr = todayStr;
+        } else {
+          // Find next upcoming date after today
+          const upcoming = [...eventDateSet].filter((d) => d >= todayStr).sort();
+          if (upcoming.length > 0) {
+            targetDateStr = upcoming[0];
+          } else {
+            // Fallback: earliest available
+            const allSorted = [...eventDateSet].sort();
+            if (allSorted.length > 0) targetDateStr = allSorted[0];
+          }
+        }
+
+        if (targetDateStr) {
+          setSelectedDate(parseISO(targetDateStr));
+        } else {
+          // No events at all
+          setSelectedDate(new Date()); // default so UI still works
+        }
+
         setLoading(false);
       })
       .catch((err) => {
+        console.error('Failed to load events', err);
         setError('Failed to load events.');
         setLoading(false);
+        if (!selectedDate) setSelectedDate(new Date());
       });
   }, [short_id]);
 
-  const filteredEvents = events
-    .map((e) => ({ ...e, date: parseISO(e.start_date) }))
-    .filter((e) => isSameDay(e.date, selectedDate))
-    .sort((a, b) => a.start.localeCompare(b.start));
+  // Wait until we have a selectedDate determined
+  const filteredEvents = useMemo(() => {
+    if (!selectedDate) return [];
+    return events
+      .map((e) => ({ ...e, date: parseISO(e.start_date) }))
+      .filter((e) => isSameDay(e.date, selectedDate))
+      .sort((a, b) => a.start.localeCompare(b.start));
+  }, [events, selectedDate]);
 
-  const segments = [];
-  for (let i = 0; i < filteredEvents.length - 1; i++) {
-    segments.push([filteredEvents[i], filteredEvents[i + 1]]);
-  }
+  // Build segments and single-event markers
+  const { segments, singleEvents } = useMemo(() => {
+    const segs = [];
+    const singles = [];
+    if (filteredEvents.length === 1) {
+      singles.push(filteredEvents[0]);
+    } else if (filteredEvents.length > 1) {
+      for (let i = 0; i < filteredEvents.length - 1; i++) {
+        segs.push([filteredEvents[i], filteredEvents[i + 1]]);
+      }
+    }
+    return { segments: segs, singleEvents: singles };
+  }, [filteredEvents]);
 
   return (
     <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-slate-50 px-4 md:px-8">
@@ -48,7 +99,7 @@ export default function SchedulePage() {
         {/* Left: Schedule card */}
         <div className="relative flex h-full flex-col space-y-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-md">
           <ScheduleHeader
-            selectedDate={selectedDate}
+            selectedDate={selectedDate || new Date()}
             setSelectedDate={setSelectedDate}
             timeFormat={timeFormat}
             setTimeFormat={setTimeFormat}
@@ -66,14 +117,18 @@ export default function SchedulePage() {
           />
         </div>
 
-        {/* Right: Map placeholder */}
+        {/* Right: Map */}
         <div className="flex h-full items-center justify-center">
           <div className="flex h-[440px] w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500">
             {loading && <div>Loading...</div>}
             {error && <div>{error}</div>}
-            {/* MapBox isn't rendered until the data is fully loaded */}
-            {!loading && !error && (
-              <MapBox segments={segments} selectedPair={[null, null]} selectedDay={selectedDate} />
+            {!loading && !error && selectedDate && (
+              <MapBox
+                segments={segments}
+                singleEvents={singleEvents}
+                selectedPair={[null, null]}
+                selectedDay={selectedDate}
+              />
             )}
           </div>
         </div>

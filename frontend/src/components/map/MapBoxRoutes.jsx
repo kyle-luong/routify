@@ -16,33 +16,73 @@ const colorPalette = [
 
 // helper to clear routes
 function clearMapRoutes(map) {
-  Object.keys(map.getStyle().sources).forEach((sourceId) => {
-    if (sourceId.startsWith('route')) {
-      if (map.getLayer(sourceId + '-layer')) {
-        map.removeLayer(sourceId + '-layer');
+  if (!map || !map.isStyleLoaded()) return;
+  
+  try {
+    const style = map.getStyle();
+    if (!style) return;
+
+    const layers = style.layers || [];
+    const routeLayers = layers.filter(layer => layer.id && layer.id.includes('route-'));
+    
+    routeLayers.forEach(layer => {
+      try {
+        if (map.getLayer(layer.id)) {
+          map.removeLayer(layer.id);
+        }
+      } catch (e) {
+        // Layer might already be removed
       }
-      if (map.getSource(sourceId)) {
-        map.removeSource(sourceId);
+    });
+
+    const sources = style.sources || {};
+    Object.keys(sources).forEach(sourceId => {
+      if (sourceId.includes('route-')) {
+        try {
+          if (map.getSource(sourceId)) {
+            map.removeSource(sourceId);
+          }
+        } catch (e) {
+          // Source might already be removed
+        }
       }
-    }
-  });
+    });
+  } catch (error) {
+    console.error('Error clearing routes:', error);
+  }
 }
 
 function MapBoxRoutes({ map, segments = [], selectedPair }) {
-
   useEffect(() => {
-    if (!map || !segments || segments.length === 0) return;
+    if (!map || !Array.isArray(segments)) return;
 
+    // Wait for map to be ready
     if (!map.isStyleLoaded()) {
-      map.once('style.load', () => drawRoutes());
-      return;
+      const onStyleLoad = () => {
+        if (segments.length > 0) {
+          drawRoutes();
+        }
+      };
+      map.once('style.load', onStyleLoad);
+      return () => map.off('style.load', onStyleLoad);
     }
-    drawRoutes();
+
+    // Always clear existing routes first
+    clearMapRoutes(map);
+
+    // Only draw routes if we have segments
+    if (segments.length > 0) {
+      if (!map.isStyleLoaded()) {
+        map.once('style.load', () => drawRoutes());
+        return;
+      }
+      drawRoutes();
+    }
 
     function drawRoutes() {
-      clearMapRoutes(map);
-      let newMarkers = [];
+      // Routes are already cleared above
 
+      const colorPalette = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
       let bounds = new mapboxgl.LngLatBounds();
 
       segments.forEach((pair, i) => {
@@ -50,22 +90,22 @@ function MapBoxRoutes({ map, segments = [], selectedPair }) {
 
         const origin = `${pair[0].longitude},${pair[0].latitude}`;
         const destination = `${pair[1].longitude},${pair[1].latitude}`;
-        const url = `https://api.mapbox.com/directions/v5/mapbox/walking/${origin};${destination}?geometries=geojson&overview=full&steps=false&access_token=${mapboxgl.accessToken}`;
+        const routeId = `route-${pair[0].title}-${pair[1].title}-${i}`;
+
+        const url = `https://api.mapbox.com/directions/v5/mapbox/walking/${origin};${destination}?geometries=geojson&access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`;
 
         fetch(url)
           .then((res) => res.json())
           .then((data) => {
-            if (!data.routes || !data.routes[0]) return;
+            if (!data.routes || data.routes.length === 0) return;
 
             const route = data.routes[0];
             const routeGeoJSON = {
               type: 'Feature',
+              properties: {},
               geometry: route.geometry,
             };
 
-            const routeId = `route-${i}`;
-
-            // Determine if this segment is selected.
             const isSelected =
               selectedPair &&
               selectedPair[0] &&
@@ -76,6 +116,12 @@ function MapBoxRoutes({ map, segments = [], selectedPair }) {
             const color = isSelected ? '#00ff00' : colorPalette[i % colorPalette.length];
             const width = isSelected ? 6 : 4;
             const opacity = isSelected ? 1 : 0.5;
+
+            // Check if source already exists (shouldn't after clearing, but safety check)
+            if (map.getSource(routeId)) {
+              map.removeLayer(routeId + '-layer');
+              map.removeSource(routeId);
+            }
 
             map.addSource(routeId, {
               type: 'geojson',
@@ -99,6 +145,11 @@ function MapBoxRoutes({ map, segments = [], selectedPair }) {
           .catch((err) => console.error('Error fetching route.', err));
       });
     }
+
+    // Cleanup function
+    return () => {
+      clearMapRoutes(map);
+    };
   }, [map, segments, selectedPair]);
 
   return null;

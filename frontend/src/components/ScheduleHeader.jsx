@@ -6,6 +6,35 @@ import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 import 'react-day-picker/dist/style.css';
 
+const calendarStyles = `
+  .selected-day {
+    background-color: #0ea5e9 !important;
+    color: white !important;
+    font-weight: bold;
+  }
+  .selected-day:hover {
+    background-color: #0284c7 !important;
+  }
+  .today-day {
+    background-color: #f1f5f9;
+    font-weight: bold;
+  }
+  .has-events {
+    position: relative;
+  }
+  .has-events::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: #0ea5e9;
+    border-radius: 50%;
+  }
+`;
+
 export default function ScheduleHeader({
   selectedDate,
   setSelectedDate,
@@ -21,6 +50,9 @@ export default function ScheduleHeader({
 
   return (
     <div className="relative z-10 w-full">
+      {/* Add styles */}
+      <style>{calendarStyles}</style>
+
       {/* Controls Row */}
       <div className="flex w-full flex-wrap items-center justify-between gap-4">
         {/* Date Navigation */}
@@ -85,7 +117,12 @@ export default function ScheduleHeader({
           <DayPicker
             mode="single"
             selected={selectedDate}
-            onSelect={(date) => date && setSelectedDate(date)}
+            onSelect={(date) => {
+              if (date) {
+                setSelectedDate(date);
+                setShowCalendar(false); // Close calendar after selection
+              }
+            }}
             showOutsideDays
             weekStartsOn={0}
             modifiers={{

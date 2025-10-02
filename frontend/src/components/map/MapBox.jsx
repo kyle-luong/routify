@@ -8,7 +8,7 @@ import MapBoxMarkers from './MapBoxMarkers';
 import MapBoxRoutes from './MapBoxRoutes';
 import useMapBox from './useMapBox';
 
-function MapBox({ segments, selectedPair = [null, null] }) {
+function MapBox({ segments, singleEvents = [], selectedPair = [null, null] }) {
   const mapContainerRef = useRef(null);
   const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v12');
 
@@ -23,34 +23,44 @@ function MapBox({ segments, selectedPair = [null, null] }) {
       setMapStyle(newStyle);
       return;
     }
-    // Save current view
+
+    // Save current view state
     const center = map.current.getCenter();
     const zoom = map.current.getZoom();
     const bearing = map.current.getBearing();
     const pitch = map.current.getPitch();
 
+    // Change style
     setMapStyle(newStyle);
+    map.current.setStyle(newStyle);
 
+    // Wait for style to load, then restore view and re-add data
     map.current.once('style.load', () => {
+      // Restore view
       map.current.setCenter(center);
       map.current.setZoom(zoom);
       map.current.setBearing(bearing);
       map.current.setPitch(pitch);
+
+      // Force re-render of markers and routes by updating a key
+      setStyleChangeKey((prev) => prev + 1);
     });
   };
 
+  const [styleChangeKey, setStyleChangeKey] = useState(0);
+
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-      {/* controls to select style */}
       <MapBoxControls mapStyle={mapStyle} onChange={handleStyleChange} />
       <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
-      {/* routes rendered by separate components */}
-      {isMapLoaded && map.current && (
-        <MapBoxRoutes map={map.current} segments={segments} selectedPair={selectedPair} />
-      )}
 
-      {/* markers rendered by separate components */}
-      {isMapLoaded && map.current && <MapBoxMarkers map={map.current} segments={segments} />}
+      {/* Add key prop to force re-render after style change */}
+      {isMapLoaded && map.current && (
+        <React.Fragment key={styleChangeKey}>
+          <MapBoxRoutes map={map.current} segments={segments} selectedPair={selectedPair} />
+          <MapBoxMarkers map={map.current} segments={segments} singleEvents={singleEvents} />
+        </React.Fragment>
+      )}
     </div>
   );
 }

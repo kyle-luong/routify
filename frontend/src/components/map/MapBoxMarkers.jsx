@@ -20,34 +20,74 @@ function clearMapMarkers(markers) {
   markers.forEach((marker) => marker.remove());
 }
 
-const MapBoxMarkers = ({ map, segments }) => {
+const MapBoxMarkers = ({ map, segments = [], singleEvents = [] }) => {
   const markersRef = useRef([]);
 
   useEffect(() => {
-    if (!map || !Array.isArray(segments)) return;
+    if (!map) return;
 
-    // Remove previous markers
-    clearMapMarkers(markersRef.current);
-    let newMarkers = [];
+    // Wait for map to be ready
+    if (!map.isStyleLoaded()) {
+      const onStyleLoad = () => {
+        addMarkers();
+      };
+      map.once('style.load', onStyleLoad);
+      return () => map.off('style.load', onStyleLoad);
+    }
 
-    segments.forEach((pair) => {
-      if (pair[0]) {
-        const lngLat = pair[0].location || [pair[0].longitude, pair[0].latitude];
-        newMarkers.push(
-          createLabeledMarker(pair[0]).setLngLat([pair[0].longitude, pair[0].latitude]).addTo(map)
-        );
+    addMarkers();
+
+    function addMarkers() {
+      // Clear previous markers
+      clearMapMarkers(markersRef.current);
+      let newMarkers = [];
+
+      try {
+        // Add markers for segments (pairs)
+        if (Array.isArray(segments)) {
+          segments.forEach((pair) => {
+            if (pair[0] && pair[0].longitude && pair[0].latitude) {
+              newMarkers.push(
+                createLabeledMarker(pair[0])
+                  .setLngLat([pair[0].longitude, pair[0].latitude])
+                  .addTo(map)
+              );
+            }
+            if (pair[1] && pair[1].longitude && pair[1].latitude) {
+              newMarkers.push(
+                createLabeledMarker(pair[1])
+                  .setLngLat([pair[1].longitude, pair[1].latitude])
+                  .addTo(map)
+              );
+            }
+          });
+        }
+
+        // Add markers for single events
+        if (Array.isArray(singleEvents)) {
+          singleEvents.forEach((event) => {
+            if (event.longitude && event.latitude) {
+              newMarkers.push(
+                createLabeledMarker(event)
+                  .setLngLat([event.longitude, event.latitude])
+                  .addTo(map)
+              );
+
+              // Center map on single event
+              map.setCenter([event.longitude, event.latitude]);
+              map.setZoom(16);
+            }
+          });
+        }
+
+        markersRef.current = newMarkers;
+      } catch (error) {
+        console.error('Error adding markers:', error);
       }
-      if (pair[1]) {
-        const lngLat = pair[1].location || [pair[1].longitude, pair[1].latitude];
-        newMarkers.push(
-          createLabeledMarker(pair[1]).setLngLat([pair[1].longitude, pair[1].latitude]).addTo(map)
-        );
-      }
-    });
+    }
 
-    markersRef.current = newMarkers;
     return () => clearMapMarkers(markersRef.current);
-  }, [map, segments]);
+  }, [map, segments, singleEvents]);
 
   return null;
 };

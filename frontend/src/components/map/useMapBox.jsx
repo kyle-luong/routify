@@ -15,10 +15,10 @@ function useMapBox(accessToken, initialStyle, containerRef) {
     map.current = new mapboxgl.Map({
       container: containerRef.current,
       style: initialStyle || 'mapbox://styles/mapbox/streets-v12',
-      center: [-78.504, 38.034],
+      center: [-78.504299, 38.034],
       zoom: 17,
       pitch: 60,
-      bearing: 25,
+      bearing: 24.4,
       maxPitch: 60,
       dragRotate: true,
       interactive: true,
@@ -33,11 +33,24 @@ function useMapBox(accessToken, initialStyle, containerRef) {
       setIsMapLoaded(true);
     });
 
+    map.current.on('error', (e) => {
+      console.error('Map error:', e);
+    });
+
     return () => {
-      map.current?.remove();
-      map.current = null;
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+        setIsMapLoaded(false);
+      }
     };
-  }, [accessToken, initialStyle, containerRef]);
+  }, [accessToken, containerRef]);
+
+  useEffect(() => {
+    if (map.current && initialStyle) {
+      map.current.setStyle(initialStyle);
+    }
+  }, [initialStyle]);
 
   return { map, isMapLoaded };
 }
