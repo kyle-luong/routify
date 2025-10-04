@@ -138,6 +138,7 @@ export default function SchedulePage() {
                 singleEvents={singleEvents}
                 selectedPair={[null, null]}
                 selectedDay={selectedDate}
+                transportMode={transportMode}
               />
             )}
           </div>

@@ -8,7 +8,7 @@ import MapBoxMarkers from './MapBoxMarkers';
 import MapBoxRoutes from './MapBoxRoutes';
 import useMapBox from './useMapBox';
 
-function MapBox({ segments = [], singleEvents = [], selectedPair = [null, null] }) {
+function MapBox({ segments = [], singleEvents = [], selectedPair = [null, null], transportMode = 'walking' }) {
   const mapContainerRef = useRef(null);
   const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v12');
   const pageLoadKey = useRef(Date.now()); 
@@ -65,6 +65,7 @@ function MapBox({ segments = [], singleEvents = [], selectedPair = [null, null] 
             map={map.current} 
             segments={segments} 
             selectedPair={selectedPair} 
+            transportMode={transportMode}
           />
           <MapBoxMarkers 
             map={map.current} 

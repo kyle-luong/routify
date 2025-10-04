@@ -52,7 +52,7 @@ function clearMapRoutes(map) {
   }
 }
 
-function MapBoxRoutes({ map, segments = [], selectedPair }) {
+function MapBoxRoutes({ map, segments = [], selectedPair, transportMode = 'walking' }) {
   const isMapLoaded = map?.isStyleLoaded?.() ?? false;
   console.log("MapBox render", { isMapLoaded, segments });
 
@@ -100,7 +100,7 @@ function MapBoxRoutes({ map, segments = [], selectedPair }) {
         const destination = `${pair[1].longitude},${pair[1].latitude}`;
         const routeId = `route-${pair[0].title}-${pair[1].title}-${i}`;
 
-        const url = `https://api.mapbox.com/directions/v5/mapbox/walking/${origin};${destination}?geometries=geojson&access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`;
+        const url = `https://api.mapbox.com/directions/v5/mapbox/${transportMode}/${origin};${destination}?geometries=geojson&access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`;
 
         fetch(url)
           .then((res) => res.json())
