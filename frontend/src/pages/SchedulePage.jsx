@@ -9,7 +9,8 @@ import ShareableLink from '../components/ShareableLink';
 
 export default function SchedulePage() {
   const { short_id } = useParams();
-  const [events, setEvents] = useState([]); // all events (with coords only for map use)
+  const [events_coords, setEventsCoords] = useState([]); // all events (with coords only for map use)
+  const [events_list, setEventsList] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [timeFormat, setTimeFormat] = useState('12h');
   const [transportMode, setTransportMode] = useState('walking');
@@ -27,11 +28,11 @@ export default function SchedulePage() {
       .then((res) => res.json())
       .then((data) => {
         const raw = Array.isArray(data.events) ? data.events : [];
+        setEventsList(raw);
 
         // Keep only events that have coordinates for map purposes
         const withCoords = raw.filter((e) => e.latitude && e.longitude);
-
-        setEvents(withCoords);
+        setEventsCoords(withCoords);
 
         // Determine which date to auto-select
         const todayStr = format(new Date(), 'yyyy-MM-dd');
@@ -73,25 +74,34 @@ export default function SchedulePage() {
   // Wait until we have a selectedDate determined
   const filteredEvents = useMemo(() => {
     if (!selectedDate) return [];
-    return events
+    return events_list
       .map((e) => ({ ...e, date: parseISO(e.start_date) }))
       .filter((e) => isSameDay(e.date, selectedDate))
       .sort((a, b) => a.start.localeCompare(b.start));
-  }, [events, selectedDate]);
+  }, [events_list, selectedDate]);
+
+  const filteredEvents_coords = useMemo(() => {
+    if (!selectedDate) return [];
+    return events_coords
+      .map((e) => ({ ...e, date: parseISO(e.start_date) }))
+      .filter((e) => isSameDay(e.date, selectedDate))
+      .sort((a, b) => a.start.localeCompare(b.start));
+  }, [events_coords, selectedDate]);
 
   // Build segments and single-event markers
   const { segments, singleEvents } = useMemo(() => {
     const segs = [];
     const singles = [];
-    if (filteredEvents.length === 1) {
-      singles.push(filteredEvents[0]);
-    } else if (filteredEvents.length > 1) {
-      for (let i = 0; i < filteredEvents.length - 1; i++) {
-        segs.push([filteredEvents[i], filteredEvents[i + 1]]);
+    if (filteredEvents_coords.length === 1) {
+      singles.push(filteredEvents_coords[0]);
+    } else if (filteredEvents_coords.length > 1) {
+      for (let i = 0; i < filteredEvents_coords.length - 1; i++) {
+        segs.push([filteredEvents_coords[i], filteredEvents_coords[i + 1]]);
       }
     }
     return { segments: segs, singleEvents: singles };
-  }, [filteredEvents]);
+  }, [filteredEvents_coords]);
+  console.log({ segments, singleEvents });
 
   return (
     <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-slate-50 px-4 md:px-8">
@@ -105,7 +115,7 @@ export default function SchedulePage() {
             setTimeFormat={setTimeFormat}
             transportMode={transportMode}
             setTransportMode={setTransportMode}
-            eventDates={[...new Set(events.map((e) => e.start_date))]}
+            eventDates={[...new Set(events_list.map((e) => e.start_date))]}
           />
 
           {short_id && <ShareableLink shortId={short_id} />}

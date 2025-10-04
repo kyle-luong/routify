@@ -49,7 +49,11 @@ def parse_ics(file_content, school_location):
             import re
             cleaned_location = re.sub(r'[^a-zA-Z\s,.-]+$', '', cleaned_location).strip()
 
-        location_key = f"{cleaned_location}, {school_location}"
+        if cleaned_location.strip():
+            location_key = f"{cleaned_location}, {school_location}"
+        else:
+            location_key = ''
+            
         if 'physics' in location_key.lower():
                 location_key = '382 McCormick Rd, Charlottesville, VA 22904, USA'
 
@@ -58,14 +62,16 @@ def parse_ics(file_content, school_location):
             lat, lng = location_cache[location_key]
         else:
             try:
-                print(f"Geocoding: {location_key}")
-                geo = gmaps.geocode(location_key)
-                print(f"Geocode result: {geo}")
-                if geo:
-                    lat = geo[0]["geometry"]["location"]["lat"]
-                    lng = geo[0]["geometry"]["location"]["lng"]
-                else:
+                if location_key == '':
+                    print(event.name, "has no valid location.")
                     lat = lng = None
+                else:
+                    geo = gmaps.geocode(location_key)
+                    if geo:
+                        lat = geo[0]["geometry"]["location"]["lat"]
+                        lng = geo[0]["geometry"]["location"]["lng"]
+                    else:
+                        lat = lng = None
             except Exception:
                 lat = lng = None
                 print(f"Geocoding failed for: {location_key}")

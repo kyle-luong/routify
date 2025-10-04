@@ -34,12 +34,12 @@ const MapBoxMarkers = ({ map, segments = [], singleEvents = [] }) => {
       map.once('style.load', onStyleLoad);
       return () => map.off('style.load', onStyleLoad);
     }
-
+    
+    // Clear previous markers
+    clearMapMarkers(markersRef.current);
     addMarkers();
 
     function addMarkers() {
-      // Clear previous markers
-      clearMapMarkers(markersRef.current);
       let newMarkers = [];
 
       try {

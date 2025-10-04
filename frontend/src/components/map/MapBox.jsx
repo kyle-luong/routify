@@ -8,9 +8,10 @@ import MapBoxMarkers from './MapBoxMarkers';
 import MapBoxRoutes from './MapBoxRoutes';
 import useMapBox from './useMapBox';
 
-function MapBox({ segments, singleEvents = [], selectedPair = [null, null] }) {
+function MapBox({ segments = [], singleEvents = [], selectedPair = [null, null] }) {
   const mapContainerRef = useRef(null);
   const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v12');
+  const pageLoadKey = useRef(Date.now()); 
 
   const { map, isMapLoaded } = useMapBox(
     import.meta.env.VITE_MAPBOX_TOKEN,
@@ -48,6 +49,9 @@ function MapBox({ segments, singleEvents = [], selectedPair = [null, null] }) {
   };
 
   const [styleChangeKey, setStyleChangeKey] = useState(0);
+  const segmentSig = segments.map(s => `${s[0]?.title || ''}>${s[1]?.title || ''}`).join('|');
+  const fragmentKey = `${pageLoadKey.current}-${styleChangeKey}-${segmentSig}`;
+
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -56,9 +60,17 @@ function MapBox({ segments, singleEvents = [], selectedPair = [null, null] }) {
 
       {/* Add key prop to force re-render after style change */}
       {isMapLoaded && map.current && (
-        <React.Fragment key={styleChangeKey}>
-          <MapBoxRoutes map={map.current} segments={segments} selectedPair={selectedPair} />
-          <MapBoxMarkers map={map.current} segments={segments} singleEvents={singleEvents} />
+        <React.Fragment key={fragmentKey}>
+          <MapBoxRoutes 
+            map={map.current} 
+            segments={segments} 
+            selectedPair={selectedPair} 
+          />
+          <MapBoxMarkers 
+            map={map.current} 
+            segments={segments} 
+            singleEvents={singleEvents} 
+          />
         </React.Fragment>
       )}
     </div>

@@ -53,13 +53,19 @@ function clearMapRoutes(map) {
 }
 
 function MapBoxRoutes({ map, segments = [], selectedPair }) {
+  const isMapLoaded = map?.isStyleLoaded?.() ?? false;
+  console.log("MapBox render", { isMapLoaded, segments });
+
   useEffect(() => {
-    if (!map || !Array.isArray(segments)) return;
+    if (!map || !Array.isArray(segments)) {
+      return;
+    }
 
     // Wait for map to be ready
     if (!map.isStyleLoaded()) {
       const onStyleLoad = () => {
         if (segments.length > 0) {
+          console.log("not loaded yet");
           drawRoutes();
         }
       };
@@ -72,10 +78,12 @@ function MapBoxRoutes({ map, segments = [], selectedPair }) {
 
     // Only draw routes if we have segments
     if (segments.length > 0) {
+      console.log("segments exists");
       if (!map.isStyleLoaded()) {
         map.once('style.load', () => drawRoutes());
         return;
       }
+      console.log("loaded");
       drawRoutes();
     }
 
