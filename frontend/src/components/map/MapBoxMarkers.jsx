@@ -20,63 +20,66 @@ function clearMapMarkers(markers) {
   markers.forEach((marker) => marker.remove());
 }
 
+/**
+ * Compute a small offset for duplicate coordinates.
+ * Each duplicate marker shifts slightly downward in pixel space.
+ */
+function getOffsetLngLat(map, lng, lat, seenCount) {
+  if (seenCount <= 0) return [lng, lat];
+  
+  const center = map.project([lng, lat]);
+  const offsetY = seenCount * 7.5; // 15px downward per duplicate
+  const offsetPx = { x: center.x, y: center.y + offsetY };
+  const newLngLat = map.unproject([offsetPx.x, offsetPx.y]);
+  return [newLngLat.lng, newLngLat.lat];
+}
+
 const MapBoxMarkers = ({ map, segments = [], singleEvents = [] }) => {
   const markersRef = useRef([]);
 
   useEffect(() => {
     if (!map) return;
 
-    // Wait for map to be ready
-    if (!map.isStyleLoaded()) {
-      const onStyleLoad = () => {
-        addMarkers();
-      };
-      map.once('style.load', onStyleLoad);
-      return () => map.off('style.load', onStyleLoad);
-    }
-    
-    // Clear previous markers
-    clearMapMarkers(markersRef.current);
-    addMarkers();
-
-    function addMarkers() {
+    const addMarkers = () => {
+      clearMapMarkers(markersRef.current);
       let newMarkers = [];
+      let locationCount = new Map();
+
+      const addMarkerAt = (event) => {
+        if (!event.longitude || !event.latitude) return;
+
+        const key = `${event.longitude},${event.latitude}`;
+        const seen = locationCount.get(key) || 0;
+        const targetLngLat = getOffsetLngLat(map, event.longitude, event.latitude, seen);
+
+        const marker = createLabeledMarker(event)
+          .setLngLat(targetLngLat)
+          .addTo(map);
+
+        newMarkers.push(marker);
+        locationCount.set(key, seen + 1);
+      };
 
       try {
-        // Add markers for segments (pairs)
-        if (Array.isArray(segments)) {
+        // Add markers for segments
+        if (Array.isArray(segments) && segments.length > 0) {
           segments.forEach((pair) => {
-            if (pair[0] && pair[0].longitude && pair[0].latitude) {
-              newMarkers.push(
-                createLabeledMarker(pair[0])
-                  .setLngLat([pair[0].longitude, pair[0].latitude])
-                  .addTo(map)
-              );
-            }
-            if (pair[1] && pair[1].longitude && pair[1].latitude) {
-              newMarkers.push(
-                createLabeledMarker(pair[1])
-                  .setLngLat([pair[1].longitude, pair[1].latitude])
-                  .addTo(map)
-              );
-            }
+            if (pair[0]) addMarkerAt(pair[0]);
           });
+          const last = segments[segments.length - 1][1];
+          if (last) addMarkerAt(last);
         }
 
         // Add markers for single events
         if (Array.isArray(singleEvents)) {
           singleEvents.forEach((event) => {
-            if (event.longitude && event.latitude) {
-              newMarkers.push(
-                createLabeledMarker(event)
-                  .setLngLat([event.longitude, event.latitude])
-                  .addTo(map)
-              );
+            addMarkerAt(event);
 
-              // Center map on single event
-              map.setCenter([event.longitude, event.latitude]);
-              map.setZoom(16);
-            }
+            // Center map on single event
+            map.setCenter([event.longitude, event.latitude]);
+            map.setZoom(16);
+            map.setPitch(0);
+            map.setBearing(0);
           });
         }
 
@@ -84,6 +87,15 @@ const MapBoxMarkers = ({ map, segments = [], singleEvents = [] }) => {
       } catch (error) {
         console.error('Error adding markers:', error);
       }
+    };
+
+    // Wait for map to be ready
+    if (!map.isStyleLoaded()) {
+      const onStyleLoad = () => addMarkers();
+      map.once('style.load', onStyleLoad);
+      return () => map.off('style.load', onStyleLoad);
+    } else {
+      addMarkers();
     }
 
     return () => clearMapMarkers(markersRef.current);

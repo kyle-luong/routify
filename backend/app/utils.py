@@ -63,7 +63,6 @@ def parse_ics(file_content, school_location):
         else:
             try:
                 if location_key == '':
-                    print(event.name, "has no valid location.")
                     lat = lng = None
                 else:
                     geo = gmaps.geocode(location_key)
@@ -74,7 +73,6 @@ def parse_ics(file_content, school_location):
                         lat = lng = None
             except Exception:
                 lat = lng = None
-                print(f"Geocoding failed for: {location_key}")
             location_cache[location_key] = (lat, lng)
 
         current = start_date
