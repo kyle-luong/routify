@@ -7,7 +7,11 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
+<<<<<<< Updated upstream
     allow_origins=["http://localhost:5173", "chrome-extension://*", "http://www.routify.tech/"],
+=======
+    allow_origins=["http://localhost:5173", "chrome-extension://*", "http://www.routify.tech.s3-website-us-east-1.amazonaws.com/", "http://www.routify.tech/", "*"],
+>>>>>>> Stashed changes
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
