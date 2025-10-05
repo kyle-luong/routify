@@ -64,3 +64,20 @@ docker compose down --volumes
 ```
 
 If `DATABASE_URL` is not set, the app falls back to a local SQLite database at `app/database.db`, with no setup required.
+
+## Current Progress
+
+### Frontend
+- **Deployed on Amazon S3** with static website hosting enabled.  
+- Accessible via:
+  - [http://www.routify.tech/](http://www.routify.tech/)
+  - [http://www.routify.tech.s3-website-us-east-1.amazonaws.com/](http://www.routify.tech.s3-website-us-east-1.amazonaws.com/)
+- Domain managed via **DotTech Domains**, pointing to the S3 bucket.  
+- Environment variable configuration:
+  ```bash
+  VITE_API_BASE_URL=http://<EC2-PUBLIC-IP>:8000
+
+### Future Work 
+
+- Enable SSL/TLS for secure connections
+- Set up CI/CD pipeline for automated deployments
