@@ -7,6 +7,7 @@ import ScheduleHeader from '../components/ScheduleHeader';
 import ScheduleList from '../components/ScheduleList';
 import ShareableLink from '../components/ShareableLink';
 import { apiFetch } from '../lib/api';
+import HomeLocationInput from '../components/HomeLocationInput';
 
 export default function SchedulePage() {
   const { short_id } = useParams();
@@ -17,6 +18,15 @@ export default function SchedulePage() {
   const [transportMode, setTransportMode] = useState('walking');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [homeLocation, setHomeLocation] = useState(() => {
+  const s = localStorage.getItem('homeLocation');
+  return s ? JSON.parse(s) : null;
+  });
+  useEffect(() => {
+    if (homeLocation) localStorage.setItem('homeLocation', JSON.stringify(homeLocation));
+    else localStorage.removeItem('homeLocation');
+  }, [homeLocation]);
 
   // Fetch session events
   useEffect(() => {
@@ -92,6 +102,13 @@ export default function SchedulePage() {
   const { segments, singleEvents } = useMemo(() => {
     const segs = [];
     const singles = [];
+    if (homeLocation && Number.isFinite(homeLocation.longitude) && Number.isFinite(homeLocation.latitude)) {
+      if (filteredEvents_coords.length == 0) {
+        singles.push(homeLocation);
+      } else {
+        segs.push([homeLocation, filteredEvents_coords[0]]);
+      }
+    }
     if (filteredEvents_coords.length === 1) {
       singles.push(filteredEvents_coords[0]);
     } else if (filteredEvents_coords.length > 1) {
@@ -99,9 +116,12 @@ export default function SchedulePage() {
         segs.push([filteredEvents_coords[i], filteredEvents_coords[i + 1]]);
       }
     }
+
     return { segments: segs, singleEvents: singles };
-  }, [filteredEvents_coords]);
-  console.log({ segments, singleEvents });
+  }, [filteredEvents_coords, homeLocation]);
+  
+  const handlePickHome = (home) => setHomeLocation(home);
+  const handleClearHome = () => setHomeLocation(null);
 
   return (
     <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-slate-50 px-4 md:px-8">
@@ -118,13 +138,19 @@ export default function SchedulePage() {
             eventDates={[...new Set(events_list.map((e) => e.start_date))]}
           />
 
-          {short_id && <ShareableLink shortId={short_id} />}
+          <HomeLocationInput
+            currentLocation={homeLocation}
+            onSetLocation={handlePickHome}
+            onClear={handleClearHome}
+          />
 
           <ScheduleList
             events={filteredEvents}
             timeFormat={timeFormat}
             transportMode={transportMode}
           />
+
+          {short_id && <ShareableLink shortId={short_id} />}
         </div>
 
         {/* Right: Map */}

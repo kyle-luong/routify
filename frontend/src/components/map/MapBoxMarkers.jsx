@@ -1,9 +1,22 @@
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 
+let noHome = 1;
+
 function createLabeledMarker(event) {
   const element = document.createElement('div');
   element.className = 'mapboxgl-marker-label';
+
+  if (event.title === 'Home') {
+    element.textContent = '🏠';
+    element.style.fontSize = '22px';
+    element.style.lineHeight = '1';
+    element.style.userSelect = 'none';
+    element.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.35))';
+    noHome = 0;
+    return new mapboxgl.Marker({ element, anchor: 'bottom' });
+  }
+
   element.style.backgroundColor = 'white';
   element.style.border = '1px solid #888';
   element.style.borderRadius = '6px';
@@ -12,7 +25,8 @@ function createLabeledMarker(event) {
   element.style.fontWeight = 'bold';
   element.style.whiteSpace = 'nowrap';
   element.style.boxShadow = '0 1px 4px rgb(0,0,0,0.1)';
-  element.innerText = event.title;
+  element.innerText = (event.idx + noHome) + '. '+ event.title;
+
   return new mapboxgl.Marker({ element });
 }
 
@@ -54,10 +68,14 @@ const MapBoxMarkers = ({ map, segments = [], singleEvents = [], isMapLoaded }) =
     try {
       // Segment markers
       if (segments.length > 0) {
-        segments.forEach((pair) => {
-          if (pair[0]) addMarkerAt(pair[0]);
+        segments.forEach((pair, i) => {
+          if (pair[0]) {
+            pair[0].idx = i;
+            addMarkerAt(pair[0]);
+          }
         });
         const last = segments[segments.length - 1][1];
+        last.idx = segments.length;
         if (last) addMarkerAt(last);
       }
 
