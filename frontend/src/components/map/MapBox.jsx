@@ -66,11 +66,14 @@ function MapBox({ segments = [], singleEvents = [], selectedPair = [null, null],
             segments={segments} 
             selectedPair={selectedPair} 
             transportMode={transportMode}
+            isMapLoaded={isMapLoaded}
           />
+
           <MapBoxMarkers 
             map={map.current} 
             segments={segments} 
-            singleEvents={singleEvents} 
+            singleEvents={singleEvents}
+            isMapLoaded={isMapLoaded}
           />
         </React.Fragment>
       )}

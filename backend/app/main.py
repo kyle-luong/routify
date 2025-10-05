@@ -7,7 +7,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "chrome-extension://*"],
+    allow_origins=["http://localhost:5173", "chrome-extension://*", "http://www.routify.tech/"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

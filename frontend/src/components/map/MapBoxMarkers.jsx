@@ -17,89 +17,68 @@ function createLabeledMarker(event) {
 }
 
 function clearMapMarkers(markers) {
-  markers.forEach((marker) => marker.remove());
+  markers.forEach(marker => marker.remove());
 }
 
-/**
- * Compute a small offset for duplicate coordinates.
- * Each duplicate marker shifts slightly downward in pixel space.
- */
 function getOffsetLngLat(map, lng, lat, seenCount) {
   if (seenCount <= 0) return [lng, lat];
   
   const center = map.project([lng, lat]);
-  const offsetY = seenCount * 7.5; // 15px downward per duplicate
+  const offsetY = seenCount * 7.5;
   const offsetPx = { x: center.x, y: center.y + offsetY };
   const newLngLat = map.unproject([offsetPx.x, offsetPx.y]);
   return [newLngLat.lng, newLngLat.lat];
 }
 
-const MapBoxMarkers = ({ map, segments = [], singleEvents = [] }) => {
+const MapBoxMarkers = ({ map, segments = [], singleEvents = [], isMapLoaded }) => {
   const markersRef = useRef([]);
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || !isMapLoaded) return;
 
-    const addMarkers = () => {
-      clearMapMarkers(markersRef.current);
-      let newMarkers = [];
-      let locationCount = new Map();
+    clearMapMarkers(markersRef.current);
+    const newMarkers = [];
+    const locationCount = new Map();
 
-      const addMarkerAt = (event) => {
-        if (!event.longitude || !event.latitude) return;
+    const addMarkerAt = (event) => {
+      if (!event.longitude || !event.latitude) return;
+      const key = `${event.longitude},${event.latitude}`;
+      const seen = locationCount.get(key) || 0;
+      const targetLngLat = getOffsetLngLat(map, event.longitude, event.latitude, seen);
 
-        const key = `${event.longitude},${event.latitude}`;
-        const seen = locationCount.get(key) || 0;
-        const targetLngLat = getOffsetLngLat(map, event.longitude, event.latitude, seen);
-
-        const marker = createLabeledMarker(event)
-          .setLngLat(targetLngLat)
-          .addTo(map);
-
-        newMarkers.push(marker);
-        locationCount.set(key, seen + 1);
-      };
-
-      try {
-        // Add markers for segments
-        if (Array.isArray(segments) && segments.length > 0) {
-          segments.forEach((pair) => {
-            if (pair[0]) addMarkerAt(pair[0]);
-          });
-          const last = segments[segments.length - 1][1];
-          if (last) addMarkerAt(last);
-        }
-
-        // Add markers for single events
-        if (Array.isArray(singleEvents)) {
-          singleEvents.forEach((event) => {
-            addMarkerAt(event);
-
-            // Center map on single event
-            map.setCenter([event.longitude, event.latitude]);
-            map.setZoom(16);
-            map.setPitch(0);
-            map.setBearing(0);
-          });
-        }
-
-        markersRef.current = newMarkers;
-      } catch (error) {
-        console.error('Error adding markers:', error);
-      }
+      const marker = createLabeledMarker(event).setLngLat(targetLngLat).addTo(map);
+      newMarkers.push(marker);
+      locationCount.set(key, seen + 1);
     };
 
-    // Wait for map to be ready
-    if (!map.isStyleLoaded()) {
-      const onStyleLoad = () => addMarkers();
-      map.once('style.load', onStyleLoad);
-      return () => map.off('style.load', onStyleLoad);
-    } else {
-      addMarkers();
+    try {
+      // Segment markers
+      if (segments.length > 0) {
+        segments.forEach((pair) => {
+          if (pair[0]) addMarkerAt(pair[0]);
+        });
+        const last = segments[segments.length - 1][1];
+        if (last) addMarkerAt(last);
+      }
+
+      // Single events
+      if (singleEvents.length > 0) {
+        singleEvents.forEach((event) => {
+          addMarkerAt(event);
+          map.setCenter([event.longitude, event.latitude]);
+          map.setZoom(16);
+          map.setPitch(0);
+          map.setBearing(0);
+        });
+      }
+
+      markersRef.current = newMarkers;
+    } catch (err) {
+      console.error('Error adding markers:', err);
     }
 
     return () => clearMapMarkers(markersRef.current);
-  }, [map, segments, singleEvents]);
+  }, [map, segments, singleEvents, isMapLoaded]);
 
   return null;
 };

@@ -6,6 +6,7 @@ import MapBox from '../components/map/MapBox';
 import ScheduleHeader from '../components/ScheduleHeader';
 import ScheduleList from '../components/ScheduleList';
 import ShareableLink from '../components/ShareableLink';
+import { apiFetch } from '../lib/api';
 
 export default function SchedulePage() {
   const { short_id } = useParams();
@@ -24,8 +25,7 @@ export default function SchedulePage() {
     setLoading(true);
     setError(null);
 
-    fetch(`/api/sessions/${short_id}`)
-      .then((res) => res.json())
+    apiFetch(`/api/sessions/${short_id}`)
       .then((data) => {
         const raw = Array.isArray(data.events) ? data.events : [];
         setEventsList(raw);

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../lib/api';
 
 export default function FileUpload() {
   const inputRef = useRef(null);
@@ -21,17 +22,19 @@ export default function FileUpload() {
     formData.append('school_location', 'University of Virginia');
 
     try {
-      const res = await fetch('/api/sessions', {
+      const data = await apiFetch('/api/sessions', {
         method: 'POST',
+        headers: {},
         body: formData,
       });
-      const data = await res.json();
-      if (res.ok && data.short_id) {
+
+      if (data.short_id) {
         setShortId(data.short_id);
       } else {
-        setError(data.error || 'Something went wrong. Please try again.');
+        setError('Upload failed. Please try again.');
       }
-    } catch {
+    } catch (err) {
+      console.error('Upload failed:', err);
       setError('Something went wrong. Please try again.');
     } finally {
       setIsUploading(false);
