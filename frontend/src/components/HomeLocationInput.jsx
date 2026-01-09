@@ -69,6 +69,24 @@ const getStateAbbr = (statePart) => {
   return trimmed;
 };
 
+// Format a full address into "Street Address, City, ST" format
+const formatLocationForDisplay = (fullLocation) => {
+  if (!fullLocation) return '';
+  const parts = fullLocation.split(', ');
+  const street = parts[0] || '';
+  const city = parts[1] || '';
+  const statePart = parts[2] || '';
+  const stateAbbr = getStateAbbr(statePart);
+
+  let display = street;
+  if (city || stateAbbr) {
+    display += ', ' + city;
+    if (city && stateAbbr) display += ', ';
+    display += stateAbbr;
+  }
+  return display;
+};
+
 export default function HomeLocationInput({
   onSetLocation,
   currentLocation,
@@ -241,7 +259,9 @@ export default function HomeLocationInput({
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={
-              currentLocation ? currentLocation.location : 'Enter home address or starting point'
+              currentLocation
+                ? formatLocationForDisplay(currentLocation.location)
+                : 'Enter home address or starting point (optional)'
             }
             className="ml-6 flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-500 focus:outline-none"
             disabled={isGeocoding}
