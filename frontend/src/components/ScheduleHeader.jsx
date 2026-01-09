@@ -80,8 +80,8 @@ export default function ScheduleHeader({
         <h2 className="text-xl font-bold whitespace-nowrap text-slate-900">Schedule</h2>
 
         {/* Format + Transport */}
-        <div className="flex space-x-2">
-          <div className="flex space-x-1 rounded-md bg-slate-100 px-2 py-1">
+        <div className="flex space-x-3">
+          <div className="flex space-x-2 rounded-md bg-slate-100 px-2 py-1">
             {[
               ['walking', <FaWalking />],
               ['cycling', <FaBicycle />],
@@ -90,7 +90,7 @@ export default function ScheduleHeader({
               <button
                 key={mode}
                 onClick={() => setTransportMode(mode)}
-                className={`text-sm ${transportMode === mode ? 'text-sky-600' : 'text-slate-500'}`}
+                className={`text-base ${transportMode === mode ? 'text-sky-600' : 'text-slate-500'}`}
               >
                 {icon}
               </button>

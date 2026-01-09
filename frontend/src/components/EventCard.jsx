@@ -8,8 +8,8 @@ export default function EventCard({ event, timeFormat }) {
   };
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className="text-lg font-medium text-slate-900">{event.title || 'Untitled Event'}</h3>
+    <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+      <h3 className="text-base font-medium text-slate-900">{event.title || 'Untitled Event'}</h3>
       <p className="text-sm text-slate-600">
         {formatTime(event.start)} – {formatTime(event.end)}
       </p>
