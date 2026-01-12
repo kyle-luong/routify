@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { format, isSameDay, parseISO } from 'date-fns';
 import { useParams } from 'react-router-dom';
 
+import HomeLocationInput from '../components/HomeLocationInput';
 import MapBox from '../components/map/MapBox';
 import ScheduleHeader from '../components/ScheduleHeader';
 import ScheduleList from '../components/ScheduleList';
 import ShareableLink from '../components/ShareableLink';
 import { apiFetch } from '../lib/api';
-import HomeLocationInput from '../components/HomeLocationInput';
 
 export default function SchedulePage() {
   const { short_id } = useParams();
@@ -20,8 +20,8 @@ export default function SchedulePage() {
   const [loading, setLoading] = useState(true);
 
   const [homeLocation, setHomeLocation] = useState(() => {
-  const s = localStorage.getItem('homeLocation');
-  return s ? JSON.parse(s) : null;
+    const s = localStorage.getItem('homeLocation');
+    return s ? JSON.parse(s) : null;
   });
   useEffect(() => {
     if (homeLocation) localStorage.setItem('homeLocation', JSON.stringify(homeLocation));
@@ -102,7 +102,11 @@ export default function SchedulePage() {
   const { segments, singleEvents } = useMemo(() => {
     const segs = [];
     const singles = [];
-    if (homeLocation && Number.isFinite(homeLocation.longitude) && Number.isFinite(homeLocation.latitude)) {
+    if (
+      homeLocation &&
+      Number.isFinite(homeLocation.longitude) &&
+      Number.isFinite(homeLocation.latitude)
+    ) {
       if (filteredEvents_coords.length == 0) {
         singles.push(homeLocation);
       } else {
@@ -119,15 +123,15 @@ export default function SchedulePage() {
 
     return { segments: segs, singleEvents: singles };
   }, [filteredEvents_coords, homeLocation]);
-  
+
   const handlePickHome = (home) => setHomeLocation(home);
   const handleClearHome = () => setHomeLocation(null);
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-slate-50 px-4 md:px-8">
-      <div className="h-full w-full max-w-6xl md:grid md:h-[82vh] md:grid-cols-2 md:gap-12">
+    <div className="flex min-h-[calc(100vh-64px)] items-start justify-center bg-slate-50 px-4 py-6 md:px-8">
+      <div className="flex h-full w-full max-w-7xl gap-6">
         {/* Left: Schedule card */}
-        <div className="relative flex h-full flex-col space-y-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-md">
+        <div className="relative flex h-[82vh] w-[450px] shrink-0 flex-col space-y-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-md">
           <ScheduleHeader
             selectedDate={selectedDate || new Date()}
             setSelectedDate={setSelectedDate}
@@ -154,8 +158,8 @@ export default function SchedulePage() {
         </div>
 
         {/* Right: Map */}
-        <div className="flex h-full items-center justify-center">
-          <div className="flex h-[440px] w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500">
+        <div className="flex h-[82vh] flex-1 items-center justify-center">
+          <div className="flex h-full w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500">
             {loading && <div>Loading...</div>}
             {error && <div>{error}</div>}
             {!loading && !error && selectedDate && (

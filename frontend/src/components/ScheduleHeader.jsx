@@ -77,7 +77,7 @@ export default function ScheduleHeader({
           </button>
         </div>
 
-        <h2 className="text-xl font-bold whitespace-nowrap text-slate-900">Schedule</h2>
+        {/* <h2 className="text-xl font-bold whitespace-nowrap text-slate-900">Schedule</h2> */}
 
         {/* Format + Transport */}
         <div className="flex space-x-3">
