@@ -79,6 +79,7 @@ export default function SchedulePage() {
         setLoading(false);
         if (!selectedDate) setSelectedDate(new Date());
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [short_id]);
 
   // Wait until we have a selectedDate determined
