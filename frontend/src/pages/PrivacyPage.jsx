@@ -11,7 +11,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="mb-3 text-xl font-semibold text-slate-900">1. Introduction</h2>
             <p className="text-slate-600">
-              Welcome to Routify. We respect your privacy and are committed to protecting your
+              Welcome to calview. We respect your privacy and are committed to protecting your
               personal data. This privacy policy explains how we collect, use, and safeguard your
               information when you use our calendar visualization service.
             </p>

@@ -1,4 +1,4 @@
-# Routify
+# calview
 
 A calendar visualizer that parses `.ics` files, geocodes event locations, and displays a time-aware schedule with commutes.
 
@@ -40,12 +40,12 @@ npm run dev
 During development, compile Tailwind CSS into `styles.css` with:
 
 ```bash
-cd ../routify-extension
+cd ../extension
 npm install
 npx tailwindcss -i ./tailwind.css -o ./styles.css --minify --watch
 ```
 
-To run this extension in Chrome, open `chrome://extensions`, enable Developer Mode, and click Load unpacked to select the `routify-extension/` folder. Firefox is not supported. Only `popup.html`, `popup.js`, `styles.css`, and `manifest.json` are needed to run the extension.
+To run this extension in Chrome, open `chrome://extensions`, enable Developer Mode, and click Load unpacked to select the `extension/` folder. Firefox is not supported. Only `popup.html`, `popup.js`, `styles.css`, and `manifest.json` are needed to run the extension.
 
 ### Environment variables
 

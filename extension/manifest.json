@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Routify Extension",
+  "name": "calview Extension",
   "version": "1.0",
-  "description": "Upload .ics file and get a Routify schedule link.",
+  "description": "Upload .ics file and get a calview schedule link.",
   "action": {
     "default_popup": "popup.html"
   },

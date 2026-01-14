@@ -5,12 +5,12 @@ const faqs = [
   {
     question: 'How do I upload my calendar?',
     answer:
-      'On the home page, click the upload area or drag and drop your .ics calendar file. Routify supports standard iCalendar files exported from Google Calendar, Apple Calendar, Outlook, and other calendar applications.',
+      'On the home page, click the upload area or drag and drop your .ics calendar file. calview supports standard iCalendar files exported from Google Calendar, Apple Calendar, Outlook, and other calendar applications.',
   },
   {
     question: 'What file formats are supported?',
     answer:
-      'Routify currently supports .ics (iCalendar) files. This is the universal calendar format supported by virtually all calendar applications. You can export this format from Google Calendar, Apple Calendar, Microsoft Outlook, and more.',
+      'calview currently supports .ics (iCalendar) files. This is the universal calendar format supported by virtually all calendar applications. You can export this format from Google Calendar, Apple Calendar, Microsoft Outlook, and more.',
   },
   {
     question: 'How do I share my schedule?',
@@ -30,7 +30,7 @@ const faqs = [
   {
     question: 'Can I edit events after uploading?',
     answer:
-      'Currently, Routify is a view-only platform. To make changes, update your events in your original calendar application and re-upload the .ics file.',
+      'Currently, calview is a view-only platform. To make changes, update your events in your original calendar application and re-upload the .ics file.',
   },
   {
     question: 'How does the map view work?',
@@ -38,9 +38,9 @@ const faqs = [
       'Events with location information are automatically plotted on an interactive map. You can see where your events are and understand the geographic context of your day at a glance.',
   },
   {
-    question: 'Is Routify free to use?',
+    question: 'Is calview free to use?',
     answer:
-      'Yes, Routify is currently free to use. We may introduce premium features in the future, but basic calendar viewing and sharing will always be free.',
+      'Yes, calview is currently free to use. We may introduce premium features in the future, but basic calendar viewing and sharing will always be free.',
   },
 ];
 
@@ -78,7 +78,7 @@ export default function HelpPage() {
         <div className="mb-12 text-center">
           <h1 className="mb-4 text-4xl font-bold text-slate-900">Help Center</h1>
           <p className="mx-auto max-w-2xl text-lg text-slate-600">
-            Find answers to frequently asked questions about using Routify.
+            Find answers to frequently asked questions about using calview.
           </p>
         </div>
 

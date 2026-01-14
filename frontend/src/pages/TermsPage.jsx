@@ -11,7 +11,7 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-3 text-xl font-semibold text-slate-900">1. Acceptance of Terms</h2>
             <p className="text-slate-600">
-              By accessing or using Routify, you agree to be bound by these Terms of Service. If
+              By accessing or using calview, you agree to be bound by these Terms of Service. If
               you do not agree to these terms, please do not use our service. We reserve the right
               to modify these terms at any time, and your continued use of the service constitutes
               acceptance of any changes.
@@ -21,7 +21,7 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-3 text-xl font-semibold text-slate-900">2. Description of Service</h2>
             <p className="text-slate-600">
-              Routify is a calendar visualization service that allows users to upload calendar
+              calview is a calendar visualization service that allows users to upload calendar
               files, view events on interactive maps, and share schedules via unique links. The
               service is provided "as is" and we make no guarantees regarding availability or
               functionality.
@@ -30,7 +30,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-3 text-xl font-semibold text-slate-900">3. User Responsibilities</h2>
-            <p className="mb-3 text-slate-600">As a user of Routify, you agree to:</p>
+            <p className="mb-3 text-slate-600">As a user of calview, you agree to:</p>
             <ul className="list-inside list-disc space-y-2 text-slate-600">
               <li>Only upload calendar files that you have the right to share</li>
               <li>Not use the service for any unlawful purpose</li>
@@ -43,7 +43,7 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-3 text-xl font-semibold text-slate-900">4. Intellectual Property</h2>
             <p className="text-slate-600">
-              The Routify service, including its design, features, and content, is owned by us and
+              The calview service, including its design, features, and content, is owned by us and
               protected by intellectual property laws. You retain ownership of any calendar data
               you upload, but grant us a limited license to process and display that data as part
               of providing the service.
@@ -53,7 +53,7 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-3 text-xl font-semibold text-slate-900">5. Privacy</h2>
             <p className="text-slate-600">
-              Your use of Routify is also governed by our{' '}
+              Your use of calview is also governed by our{' '}
               <a href="/privacy" className="text-sky-600 hover:text-sky-700 hover:underline">
                 Privacy Policy
               </a>
@@ -64,7 +64,7 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-3 text-xl font-semibold text-slate-900">6. Limitation of Liability</h2>
             <p className="text-slate-600">
-              To the maximum extent permitted by law, Routify and its operators shall not be liable
+              To the maximum extent permitted by law, calview and its operators shall not be liable
               for any indirect, incidental, special, consequential, or punitive damages, including
               loss of data, profits, or business opportunities, arising from your use of or
               inability to use the service.
@@ -93,7 +93,7 @@ export default function TermsPage() {
             <h2 className="mb-3 text-xl font-semibold text-slate-900">9. Governing Law</h2>
             <p className="text-slate-600">
               These Terms of Service shall be governed by and construed in accordance with the laws
-              of the jurisdiction in which Routify operates, without regard to its conflict of law
+              of the jurisdiction in which calview operates, without regard to its conflict of law
               provisions.
             </p>
           </section>

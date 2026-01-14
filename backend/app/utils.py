@@ -25,6 +25,59 @@ HIGH_CONFIDENCE_TYPES = {"premise", "street_address", "establishment", "point_of
 # Maximum distance (km) from cluster centroid before considering a location an outlier
 MAX_OUTLIER_DISTANCE_KM = 50
 
+# Common abbreviations in building/location names
+LOCATION_ABBREVIATIONS = {
+    r'\bBldg\b': 'Building',
+    r'\bBlg\b': 'Building',
+    r'\bEng\b': 'Engineering',
+    r'\bEngr\b': 'Engineering',
+    r'\bMech\b': 'Mechanical',
+    r'\bElec\b': 'Electrical',
+    r'\bChem\b': 'Chemistry',
+    r'\bPhys\b': 'Physics',
+    r'\bBio\b': 'Biology',
+    r'\bSci\b': 'Science',
+    r'\bLab\b': 'Laboratory',
+    r'\bCtr\b': 'Center',
+    r'\bCntr\b': 'Center',
+    r'\bLib\b': 'Library',
+    r'\bAud\b': 'Auditorium',
+    r'\bRm\b': 'Room',
+    r'\bSt\b': 'Street',
+    r'\bAve\b': 'Avenue',
+    r'\bDr\b': 'Drive',
+    r'\bUniv\b': 'University',
+    r'\bAdmin\b': 'Administration',
+    r'\bComm\b': 'Communication',
+    r'\bComp\b': 'Computer',
+    r'\bInfo\b': 'Information',
+    r'\bTech\b': 'Technology',
+    r'\bMgmt\b': 'Management',
+    r'\bBus\b': 'Business',
+    r'\bEd\b': 'Education',
+    r'\bMed\b': 'Medical',
+    r'\bHlth\b': 'Health',
+    r'\bArts\b': 'Arts',
+    r'\bSoc\b': 'Social',
+    r'\bPsych\b': 'Psychology',
+    r'\bMath\b': 'Mathematics',
+    r'\bStat\b': 'Statistics',
+    r'\bEcon\b': 'Economics',
+    r'\bHum\b': 'Humanities',
+    r'\bRes\b': 'Research',
+    r'\bDev\b': 'Development',
+    r'\bSvcs\b': 'Services',
+    r'\bSvc\b': 'Service',
+}
+
+
+def expand_abbreviations(text: str) -> str:
+    """Expand common abbreviations in location names."""
+    result = text
+    for abbrev, full in LOCATION_ABBREVIATIONS.items():
+        result = re.sub(abbrev, full, result, flags=re.IGNORECASE)
+    return result
+
 
 def haversine_distance(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
     """
@@ -44,11 +97,13 @@ def haversine_distance(lat1: float, lng1: float, lat2: float, lng2: float) -> fl
 
 
 def clean_location(location: str) -> str:
-    """Clean location string for geocoding."""
+    """Clean and expand location string for geocoding."""
     if not location:
         return ""
     # Remove trailing room numbers, codes, etc.
     cleaned = re.sub(r'[^a-zA-Z\s,.-]+$', '', location).strip()
+    # Expand common abbreviations for better geocoding
+    cleaned = expand_abbreviations(cleaned)
     return cleaned
 
 

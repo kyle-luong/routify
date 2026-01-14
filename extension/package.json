@@ -1,5 +1,5 @@
 {
-  "name": "routify-extension",
+  "name": "calview-extension",
   "version": "1.0.0",
   "main": "popup.js",
   "scripts": {

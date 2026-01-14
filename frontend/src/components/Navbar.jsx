@@ -20,62 +20,64 @@ export default function Navbar() {
 
   return (
     <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-8">
-        <Link to="/" className="text-xl font-semibold text-slate-900">
-          Routify
-        </Link>
-
-        <nav className="flex items-center gap-1 md:gap-2">
-          {/* Schedule navigation - only show if user has a session */}
-          {activeSession && (
-            <>
-              <Link
-                to={`/view/${activeSession}`}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  isOnMapView
-                    ? 'bg-slate-100 text-slate-900'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                }`}
-              >
-                <FiMap className="h-4 w-4" />
-                <span className="hidden sm:inline">Map</span>
-              </Link>
-              <Link
-                to={`/view/${activeSession}/calendar`}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  isOnCalendarView
-                    ? 'bg-slate-100 text-slate-900'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                }`}
-              >
-                <FiCalendar className="h-4 w-4" />
-                <span className="hidden sm:inline">Calendar</span>
-              </Link>
-              <div className="mx-2 h-5 w-px bg-slate-200" />
-            </>
-          )}
-
-          <Link
-            to="/about"
-            className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-              location.pathname === '/about'
-                ? 'bg-slate-100 text-slate-900'
-                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-            }`}
-          >
-            About
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 md:px-6">
+        {/* Left side: Logo + About/Help */}
+        <div className="flex items-center gap-6">
+          <Link to="/" className="text-lg font-semibold text-slate-900">
+            calview
           </Link>
-          <Link
-            to="/help"
-            className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-              location.pathname === '/help'
-                ? 'bg-slate-100 text-slate-900'
-                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-            }`}
-          >
-            Help
-          </Link>
-        </nav>
+
+          <nav className="hidden items-center gap-1 sm:flex">
+            <Link
+              to="/about"
+              className={`px-3 py-1.5 text-sm font-medium transition ${
+                location.pathname === '/about'
+                  ? 'text-slate-900'
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              About
+            </Link>
+            <Link
+              to="/help"
+              className={`px-3 py-1.5 text-sm font-medium transition ${
+                location.pathname === '/help'
+                  ? 'text-slate-900'
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              Help
+            </Link>
+          </nav>
+        </div>
+
+        {/* Right side: Map/Calendar toggle */}
+        {activeSession && (
+          <nav className="flex items-center gap-1">
+            <Link
+              to={`/view/${activeSession}`}
+              className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                isOnMapView
+                  ? 'bg-slate-900 text-white'
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              <FiMap className="h-4 w-4" />
+              <span className="hidden sm:inline">Map</span>
+            </Link>
+            <Link
+              to={`/view/${activeSession}/calendar`}
+              className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                isOnCalendarView
+                  ? 'bg-slate-900 text-white'
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
+            >
+              <FiCalendar className="h-4 w-4" />
+              <span className="hidden sm:inline">Calendar</span>
+            </Link>
+          </nav>
+        )}
       </div>
     </header>
   );

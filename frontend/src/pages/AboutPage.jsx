@@ -66,10 +66,10 @@ export default function AboutPage() {
     <div className="min-h-[calc(100vh-64px)] bg-slate-50 px-4 py-12 md:px-8">
       <div className="mx-auto max-w-4xl">
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-slate-900">About Routify</h1>
+          <h1 className="mb-4 text-4xl font-bold text-slate-900">About calview</h1>
           <p className="mx-auto max-w-2xl text-lg text-slate-600">
             We're on a mission to help people visualize their schedules and navigate their days
-            with ease. Routify transforms your calendar into a shareable, map-aware experience.
+            with ease. calview transforms your calendar into a shareable, map-aware experience.
           </p>
         </div>
 

@@ -1,4 +1,4 @@
-name: Deploy Routify
+name: Deploy calview
 
 on:
   push:

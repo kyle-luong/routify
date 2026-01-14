@@ -14,7 +14,7 @@ export default function HomePage() {
               Share your day.
             </h1>
             <p className="max-w-prose text-lg text-slate-600">
-              Upload your calendar and get a smarter, visual view of your day. Routify creates a
+              Upload your calendar and get a smarter, visual view of your day. calview creates a
               sharable, location-aware schedule — complete with travel times and map-based context.
             </p>
             <FileUpload />

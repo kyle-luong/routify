@@ -1,4 +1,4 @@
-const SESSION_KEY = 'routify_session';
+const SESSION_KEY = 'calview_session';
 
 export function saveSession(shortId) {
   if (shortId) {
