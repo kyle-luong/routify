@@ -3,8 +3,6 @@ import { FiCalendar, FiList } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
 export default function ViewToggle({ shortId, active = 'list' }) {
-  if (!shortId) return null;
-
   const isCalendarView = active === 'calendar';
   const containerRef = useRef(null);
   const listRef = useRef(null);
@@ -32,6 +30,8 @@ export default function ViewToggle({ shortId, active = 'list' }) {
     window.addEventListener('resize', updateIndicator);
     return () => window.removeEventListener('resize', updateIndicator);
   }, [updateIndicator]);
+
+  if (!shortId) return null;
 
   return (
     <div

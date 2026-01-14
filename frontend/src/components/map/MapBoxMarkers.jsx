@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 
-let noHome = 1;
-
 function createLabeledMarker(event, labelNumber = null) {
   const element = document.createElement('div');
   element.className = 'mapboxgl-marker-label';
@@ -55,15 +53,6 @@ const MapBoxMarkers = ({ map, segments = [], singleEvents = [], isMapLoaded }) =
     clearMapMarkers(markersRef.current);
     const newMarkers = [];
     const locationCount = new Map();
-
-    if (
-      segments.some((pair) => pair[0]?.title === 'Home' || pair[1]?.title === 'Home') ||
-      singleEvents.some((event) => event.title === 'Home')
-    ) {
-      noHome = 0;
-    } else {
-      noHome = 1;
-    }
 
     const addedKeys = new Set();
 

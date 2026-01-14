@@ -54,7 +54,7 @@ export default function ScheduleHeader({
       <style>{calendarStyles}</style>
 
       {/* Controls Row */}
-      <div className="flex w-full flex-wrap items-center justify-between gap-4">
+      <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:gap-4">
         {/* Date Navigation */}
         <div className="flex items-center space-x-2">
           <button

@@ -9,7 +9,7 @@ export default function CalendarPage() {
   const { short_id } = useParams();
   const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [timeFormat, setTimeFormat] = useState('12h');
+  const [timeFormat] = useState('12h');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 

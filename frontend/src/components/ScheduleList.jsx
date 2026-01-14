@@ -1,6 +1,6 @@
 import EventCard from './EventCard';
 
-export default function ScheduleList({ events, timeFormat }) {
+export default function ScheduleList({ events, timeFormat, commuteTimes }) {
   return (
     <div className="h-full overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
       {events.length == 0 ? (
@@ -13,14 +13,15 @@ export default function ScheduleList({ events, timeFormat }) {
           const currHasFull = event && event.start && event.end && event.location;
           const nextHasFull = next && next.start && next.end && next.location;
           const showCommuteText = currHasFull && nextHasFull;
+          const commuteInfo = commuteTimes?.[i];
           return (
             <div key={i} className="">
               <EventCard event={event} timeFormat={timeFormat} />
               {i < events.length - 1 && (
                 <div className="my-3 flex items-center px-1 text-sm text-slate-500">
                   <div className="h-px flex-grow bg-slate-200" />
-                  {showCommuteText && (
-                    <span className="mx-2">Commute: ~{Math.floor(Math.random() * 10) + 5} min</span>
+                  {showCommuteText && commuteInfo?.duration_text && (
+                    <span className="mx-2">Commute: {commuteInfo.duration_text}</span>
                   )}
                   <div className="h-px flex-grow bg-slate-200" />
                 </div>

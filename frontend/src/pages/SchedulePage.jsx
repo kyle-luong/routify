@@ -7,7 +7,7 @@ import MapBox from '../components/map/MapBox';
 import ScheduleHeader from '../components/ScheduleHeader';
 import ScheduleList from '../components/ScheduleList';
 import ShareableLink from '../components/ShareableLink';
-import { apiFetch } from '../lib/api';
+import { apiFetch, getCommuteTimes } from '../lib/api';
 
 export default function SchedulePage() {
   const { short_id } = useParams();
@@ -18,6 +18,7 @@ export default function SchedulePage() {
   const [transportMode, setTransportMode] = useState('walking');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [commuteTimes, setCommuteTimes] = useState([]);
 
   const [homeLocation, setHomeLocation] = useState(() => {
     const s = localStorage.getItem('homeLocation');
@@ -99,6 +100,34 @@ export default function SchedulePage() {
       .sort((a, b) => a.start.localeCompare(b.start));
   }, [events_coords, selectedDate]);
 
+  // Fetch commute times when events or transport mode changes
+  useEffect(() => {
+    if (filteredEvents_coords.length < 2) {
+      setCommuteTimes([]);
+      return;
+    }
+
+    const origins = filteredEvents_coords.slice(0, -1).map((e) => ({
+      lat: e.latitude,
+      lng: e.longitude,
+    }));
+    const destinations = filteredEvents_coords.slice(1).map((e) => ({
+      lat: e.latitude,
+      lng: e.longitude,
+    }));
+
+    getCommuteTimes(origins, destinations, transportMode)
+      .then((results) => {
+        // results is a 2D array; extract diagonal (origin[i] -> destination[i])
+        const times = results.map((row, i) => row[i]);
+        setCommuteTimes(times);
+      })
+      .catch((err) => {
+        console.error('Failed to fetch commute times', err);
+        setCommuteTimes([]);
+      });
+  }, [filteredEvents_coords, transportMode]);
+
   // Build segments and single-event markers
   const { segments, singleEvents } = useMemo(() => {
     const segs = [];
@@ -130,9 +159,9 @@ export default function SchedulePage() {
 
   return (
     <div className="flex min-h-[calc(100vh-64px)] items-start justify-center bg-slate-50 px-4 py-6 md:px-8">
-      <div className="flex h-full w-full max-w-7xl gap-6">
+      <div className="flex h-full w-full max-w-7xl flex-col gap-6 lg:flex-row">
         {/* Left: Schedule card */}
-        <div className="relative flex h-[82vh] w-[450px] shrink-0 flex-col space-y-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-md">
+        <div className="relative flex h-auto w-full shrink-0 flex-col space-y-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-md lg:h-[82vh] lg:w-[450px]">
           <ScheduleHeader
             selectedDate={selectedDate || new Date()}
             setSelectedDate={setSelectedDate}
@@ -152,14 +181,14 @@ export default function SchedulePage() {
           <ScheduleList
             events={filteredEvents}
             timeFormat={timeFormat}
-            transportMode={transportMode}
+            commuteTimes={commuteTimes}
           />
 
           {short_id && <ShareableLink shortId={short_id} />}
         </div>
 
         {/* Right: Map */}
-        <div className="flex h-[82vh] flex-1 items-center justify-center">
+        <div className="flex h-[50vh] flex-1 items-center justify-center lg:h-[82vh]">
           <div className="flex h-full w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500">
             {loading && <div>Loading...</div>}
             {error && <div>{error}</div>}

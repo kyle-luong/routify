@@ -115,13 +115,13 @@ jobs:
         run: |
           aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
 
-    #   - name: Invalidate CloudFront cache (optional - skip if not using)
-    #     if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
-    #     run: |
-    #       aws cloudfront create-invalidation \
-    #         --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-    #         --paths "/*"
-    #     continue-on-error: true
+      - name: Invalidate CloudFront cache
+        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+        continue-on-error: true
 
   # ============================================
   # Deploy Backend to EC2
@@ -142,7 +142,9 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          timeout: 120s
           script: |
+            set -e
             cd /home/${{ secrets.EC2_USERNAME }}/routify/backend
 
             # Pull latest changes
@@ -154,5 +156,11 @@ jobs:
 
             # Restart the service
             sudo systemctl restart routify
+
+            # Wait for service to start
+            sleep 5
+
+            # Health check
+            curl -f http://localhost:8000/health || exit 1
 
             echo "Backend deployed successfully!"

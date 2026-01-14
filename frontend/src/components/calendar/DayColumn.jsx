@@ -2,7 +2,7 @@ import { format, isSameDay } from 'date-fns';
 
 import CalendarEvent from './CalendarEvent';
 import { HOUR_HEIGHT } from './constants';
-import { calculateEventColumns, formatHour } from './utils';
+import { calculateEventColumns } from './utils';
 
 /**
  * Single day column showing the day header and events
@@ -12,11 +12,9 @@ export default function DayColumn({
   events,
   timeSlots,
   startHour,
-  endHour,
   timeFormat,
   selectedDate,
 }) {
-  const dayStr = format(day, 'yyyy-MM-dd');
   const isToday = isSameDay(day, new Date());
   const isSelected = isSameDay(day, selectedDate);
   const dayLayouts = calculateEventColumns(events);

@@ -22,8 +22,8 @@ export default function HomePage() {
         </div>
 
         {/* Right Side: Map Preview */}
-        <div className="flex items-center justify-center">
-          <div className="flex h-[440px] w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500">
+        <div className="hidden items-center justify-center md:flex">
+          <div className="flex h-[300px] w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500 md:h-[440px]">
             <MapBox />
           </div>
         </div>

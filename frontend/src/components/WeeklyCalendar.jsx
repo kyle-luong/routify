@@ -30,10 +30,6 @@ export default function WeeklyCalendar({
     return events.filter((event) => weekDates.includes(event.start_date));
   }, [events, weekStart]);
 
-  const weekEventDates = useMemo(() => {
-    return weekEvents.map((e) => e.start_date);
-  }, [weekEvents]);
-
   // Also provide all event dates (from the full events prop) so date picker
   // can show markers for the entire ICS, not just this week.
   const allEventDates = useMemo(() => {
@@ -98,7 +94,7 @@ export default function WeeklyCalendar({
 
       {/* Calendar grid - scrollable */}
       <div className="flex flex-1 overflow-auto">
-        <TimeColumn timeSlots={timeSlots} timeFormat={timeFormat} endHour={endHour} />
+        <TimeColumn timeSlots={timeSlots} timeFormat={timeFormat} />
 
         {/* Days grid */}
         <div className="flex flex-1">
