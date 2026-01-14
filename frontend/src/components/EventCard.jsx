@@ -7,10 +7,12 @@ export default function EventCard({ event, timeFormat }) {
     return `${hour12}:${minute.toString().padStart(2, '0')} ${suffix}`;
   };
 
+  const hasValidTime = event.start && event.end && event.start !== event.end;
+
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
       <h3 className="text-base font-medium text-slate-900">{event.title || 'Untitled Event'}</h3>
-      {event.start && event.end ? (
+      {hasValidTime ? (
         <p className="text-sm text-slate-600">
           {formatTime(event.start)} – {formatTime(event.end)}
         </p>
