@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
+import { logger } from '../../lib/logger';
 
 function createLabeledMarker(event, labelNumber = null) {
   const element = document.createElement('div');
@@ -46,6 +47,7 @@ function getOffsetLngLat(map, lng, lat, seenCount) {
 
 const MapBoxMarkers = ({ map, segments = [], singleEvents = [], isMapLoaded }) => {
   const markersRef = useRef([]);
+  const hasInitialFit = useRef(false);
 
   useEffect(() => {
     if (!map || !isMapLoaded) return;
@@ -53,6 +55,7 @@ const MapBoxMarkers = ({ map, segments = [], singleEvents = [], isMapLoaded }) =
     clearMapMarkers(markersRef.current);
     const newMarkers = [];
     const locationCount = new Map();
+    const allCoordinates = []; // Track all coordinates for fitBounds
 
     const addedKeys = new Set();
 
@@ -118,6 +121,7 @@ const MapBoxMarkers = ({ map, segments = [], singleEvents = [], isMapLoaded }) =
 
       const marker = createLabeledMarker(event, labelNumber).setLngLat(targetLngLat).addTo(map);
       newMarkers.push(marker);
+      allCoordinates.push([event.longitude, event.latitude]);
       locationCount.set(key, seen + 1);
       addedKeys.add(dedupeKey);
       addedKeys.add(key);
@@ -141,16 +145,39 @@ const MapBoxMarkers = ({ map, segments = [], singleEvents = [], isMapLoaded }) =
       if (singleEvents.length > 0) {
         singleEvents.forEach((event) => {
           addMarkerAt(event);
-          map.setCenter([event.longitude, event.latitude]);
-          map.setZoom(16);
-          map.setPitch(0);
-          map.setBearing(0);
         });
       }
 
       markersRef.current = newMarkers;
+
+      // Fit map to show all markers
+      if (allCoordinates.length > 0) {
+        if (allCoordinates.length === 1) {
+          // Single marker - center on it
+          map.flyTo({
+            center: allCoordinates[0],
+            zoom: 16,
+            pitch: 45,
+            bearing: 0,
+            duration: 1000,
+          });
+        } else {
+          // Multiple markers - fit bounds to show all
+          const bounds = new mapboxgl.LngLatBounds();
+          allCoordinates.forEach((coord) => bounds.extend(coord));
+
+          map.fitBounds(bounds, {
+            padding: { top: 80, bottom: 80, left: 80, right: 80 },
+            maxZoom: 16,
+            pitch: 45,
+            bearing: 0,
+            duration: 1000,
+          });
+        }
+        hasInitialFit.current = true;
+      }
     } catch (err) {
-      console.error('Error adding markers:', err);
+      logger.error('Error adding markers:', err);
     }
 
     return () => clearMapMarkers(markersRef.current);

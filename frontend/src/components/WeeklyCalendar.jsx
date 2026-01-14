@@ -37,9 +37,12 @@ export default function WeeklyCalendar({
   }, [events]);
 
   // Calculate dynamic time range based on events in the week
+  // Minimum 9 hours displayed
+  const MIN_HOURS = 9;
+
   const { startHour, endHour } = useMemo(() => {
     if (weekEvents.length === 0) {
-      return { startHour: 8, endHour: 18 }; // Default 8 AM - 6 PM
+      return { startHour: 8, endHour: 17 }; // Default 8 AM - 5 PM (9 hours)
     }
 
     let minHour = 24;
@@ -55,8 +58,23 @@ export default function WeeklyCalendar({
     });
 
     // Add 1 hour padding before and after
-    const start = Math.max(0, minHour - 1);
-    const end = Math.min(24, maxHour + 1);
+    let start = Math.max(0, minHour - 1);
+    let end = Math.min(24, maxHour + 1);
+
+    // Ensure minimum hours displayed
+    const currentHours = end - start;
+    if (currentHours < MIN_HOURS) {
+      const diff = MIN_HOURS - currentHours;
+      const addBefore = Math.floor(diff / 2);
+      const addAfter = diff - addBefore;
+      start = Math.max(0, start - addBefore);
+      end = Math.min(24, end + addAfter);
+      // If we hit bounds, add remaining to other side
+      if (end - start < MIN_HOURS) {
+        if (start === 0) end = Math.min(24, MIN_HOURS);
+        else start = Math.max(0, 24 - MIN_HOURS);
+      }
+    }
 
     return { startHour: start, endHour: end };
   }, [weekEvents]);

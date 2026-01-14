@@ -10,8 +10,8 @@ export default function TimeColumn({ timeSlots, timeFormat }) {
       {/* Empty header cell - sticky */}
       <div className="sticky top-0 z-20 h-14 border-b border-slate-200 bg-slate-50" />
 
-      {/* Time labels */}
-      <div className="relative">
+      {/* Time labels - explicit height to match day columns */}
+      <div className="relative" style={{ height: `${timeSlots.length * HOUR_HEIGHT}px` }}>
         {timeSlots.map((hour) => (
           <div
             key={hour}

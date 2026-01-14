@@ -37,8 +37,11 @@ export default function DayColumn({
         </span>
       </div>
 
-      {/* Time slots with events */}
-      <div className={`relative flex-1 ${isToday ? 'bg-slate-100/50' : ''}`}>
+      {/* Time slots with events - explicit height to prevent offset */}
+      <div
+        className={`relative ${isToday ? 'bg-slate-100/50' : ''}`}
+        style={{ height: `${timeSlots.length * HOUR_HEIGHT}px` }}
+      >
         {/* Grid lines */}
         {timeSlots.map((hour) => (
           <div

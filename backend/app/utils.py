@@ -5,7 +5,7 @@ import googlemaps
 import os
 import re
 import logging
-from collections import Counter
+import math
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,6 +21,26 @@ MAX_DATE_YEAR = 2030
 
 # Location types that indicate high confidence (Google Maps result types)
 HIGH_CONFIDENCE_TYPES = {"premise", "street_address", "establishment", "point_of_interest", "university"}
+
+# Maximum distance (km) from cluster centroid before considering a location an outlier
+MAX_OUTLIER_DISTANCE_KM = 50
+
+
+def haversine_distance(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    """
+    Calculate the great-circle distance between two points on Earth (in km).
+    """
+    R = 6371  # Earth's radius in km
+
+    lat1_rad = math.radians(lat1)
+    lat2_rad = math.radians(lat2)
+    delta_lat = math.radians(lat2 - lat1)
+    delta_lng = math.radians(lng2 - lng1)
+
+    a = math.sin(delta_lat / 2) ** 2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(delta_lng / 2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    return R * c
 
 
 def clean_location(location: str) -> str:
@@ -119,7 +139,7 @@ def find_anchor(geocoded_locations: dict) -> dict:
 def cluster_locations(geocoded_locations: dict) -> dict:
     """
     Find the geographic center of successfully geocoded locations.
-    Uses simple centroid calculation.
+    Uses median to be more robust against outliers.
     """
     valid_coords = [
         (data["lat"], data["lng"])
@@ -130,10 +150,44 @@ def cluster_locations(geocoded_locations: dict) -> dict:
     if not valid_coords:
         return None
 
-    avg_lat = sum(c[0] for c in valid_coords) / len(valid_coords)
-    avg_lng = sum(c[1] for c in valid_coords) / len(valid_coords)
+    # Use median instead of mean for robustness against outliers
+    lats = sorted([c[0] for c in valid_coords])
+    lngs = sorted([c[1] for c in valid_coords])
 
-    return {"lat": avg_lat, "lng": avg_lng}
+    mid = len(lats) // 2
+    if len(lats) % 2 == 0:
+        median_lat = (lats[mid - 1] + lats[mid]) / 2
+        median_lng = (lngs[mid - 1] + lngs[mid]) / 2
+    else:
+        median_lat = lats[mid]
+        median_lng = lngs[mid]
+
+    return {"lat": median_lat, "lng": median_lng}
+
+
+def find_outliers(geocoded_locations: dict, centroid: dict) -> list:
+    """
+    Find locations that are too far from the centroid (likely wrong geocode).
+    Returns list of location keys that are outliers.
+    """
+    if not centroid:
+        return []
+
+    outliers = []
+    for loc, data in geocoded_locations.items():
+        if data["lat"] is None:
+            continue
+
+        distance = haversine_distance(
+            centroid["lat"], centroid["lng"],
+            data["lat"], data["lng"]
+        )
+
+        if distance > MAX_OUTLIER_DISTANCE_KM:
+            logger.debug(f"Outlier detected: '{loc}' is {distance:.1f}km from centroid")
+            outliers.append(loc)
+
+    return outliers
 
 
 def parse_ics(file_content: str, school_location: str = None):
@@ -195,18 +249,50 @@ def parse_ics(file_content: str, school_location: str = None):
     for loc in unique_locations.keys():
         geocoded[loc] = geocode_location(loc)
 
-    # Step 3: Find anchor (highest confidence result)
-    anchor = find_anchor(geocoded)
+    # Step 3: Find cluster centroid (using median for outlier robustness)
+    centroid = cluster_locations(geocoded)
 
-    # If no anchor found, try using cluster centroid
+    # Step 4: Detect outliers - locations too far from centroid
+    outliers = find_outliers(geocoded, centroid) if centroid else []
+
+    # Step 5: Find anchor (highest confidence non-outlier result)
+    anchor = None
+    best_score = 0
+    for loc, data in geocoded.items():
+        if loc in outliers:
+            continue
+        if data["lat"] is None:
+            continue
+        if data["confidence"] > best_score:
+            best_score = data["confidence"]
+            anchor = {"lat": data["lat"], "lng": data["lng"]}
+
+    # If no anchor found, use centroid
     if not anchor:
-        anchor = cluster_locations(geocoded)
+        anchor = centroid
 
-    # Step 4: Second pass - re-geocode failed/low-confidence locations with anchor bias
+    # Step 6: Re-geocode outliers and low-confidence locations with anchor bias
     if anchor:
+        # First handle outliers
+        for loc in outliers:
+            retry = geocode_location(loc, bias_coords=anchor)
+            if retry["lat"] is not None:
+                # Verify the retry isn't also an outlier
+                retry_distance = haversine_distance(
+                    anchor["lat"], anchor["lng"],
+                    retry["lat"], retry["lng"]
+                )
+                if retry_distance <= MAX_OUTLIER_DISTANCE_KM:
+                    geocoded[loc] = retry
+                else:
+                    # Still an outlier, set to None
+                    geocoded[loc] = {"lat": None, "lng": None, "confidence": 0, "raw": None}
+
+        # Then handle low-confidence (non-outlier) locations
         for loc, data in geocoded.items():
+            if loc in outliers:
+                continue
             if data["lat"] is None or data["confidence"] < 0.5:
-                # Try again with anchor bias
                 retry = geocode_location(loc, bias_coords=anchor)
                 if retry["lat"] is not None:
                     geocoded[loc] = retry
