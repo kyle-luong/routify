@@ -72,10 +72,10 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] flex-col bg-slate-50">
+    <div className="flex h-[calc(100vh-64px)] flex-col bg-slate-50">
       {/* Main content - full width calendar */}
       <div className="flex flex-1 overflow-hidden p-4 md:p-6">
-        <div className="mx-auto w-full max-w-7xl overflow-hidden">
+        <div className="mx-auto flex h-full w-full max-w-7xl">
           <WeeklyCalendar
             events={events}
             selectedDate={selectedDate}
