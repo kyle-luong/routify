@@ -1,4 +1,7 @@
+import { extractSchedule } from "./extractor/extractSchedule.js";
+
 const fileInput = document.getElementById("icsFile");
+const scanBtn = document.getElementById("scanBtn");
 const uploadBtn = document.getElementById("uploadBtn");
 const linkBtn = document.getElementById("linkBtn");
 const shareableLink = document.getElementById("shareableLink");

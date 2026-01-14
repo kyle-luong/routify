@@ -6,6 +6,6 @@
   "action": {
     "default_popup": "popup.html"
   },
-  "permissions": ["storage"],
+  "permissions": ["tabs", "scripting", "storage"],
   "host_permissions": ["http://localhost:8000/*"]
 }
