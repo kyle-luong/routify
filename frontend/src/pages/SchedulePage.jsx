@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { format, isSameDay, parseISO } from 'date-fns';
-import { FiGrid, FiList } from 'react-icons/fi';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import HomeLocationInput from '../components/HomeLocationInput';
 import MapBox from '../components/map/MapBox';
@@ -134,35 +133,15 @@ export default function SchedulePage() {
       <div className="flex h-full w-full max-w-7xl gap-6">
         {/* Left: Schedule card */}
         <div className="relative flex h-[82vh] w-[450px] shrink-0 flex-col space-y-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-md">
-          <div className="flex items-center justify-between">
-            <ScheduleHeader
-              selectedDate={selectedDate || new Date()}
-              setSelectedDate={setSelectedDate}
-              timeFormat={timeFormat}
-              setTimeFormat={setTimeFormat}
-              transportMode={transportMode}
-              setTransportMode={setTransportMode}
-              eventDates={[...new Set(events_list.map((e) => e.start_date))]}
-            />
-
-            {/* View toggle */}
-            <div className="flex rounded-lg border border-slate-300 bg-white p-1">
-              <button
-                disabled
-                className="flex items-center gap-1 rounded-md bg-sky-100 px-2 py-1 text-xs font-medium text-sky-700"
-              >
-                <FiList className="h-3.5 w-3.5" />
-                List
-              </button>
-              <Link
-                to={`/view/${short_id}/calendar`}
-                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-slate-600 hover:bg-slate-100"
-              >
-                <FiGrid className="h-3.5 w-3.5" />
-                Calendar
-              </Link>
-            </div>
-          </div>
+          <ScheduleHeader
+            selectedDate={selectedDate || new Date()}
+            setSelectedDate={setSelectedDate}
+            timeFormat={timeFormat}
+            setTimeFormat={setTimeFormat}
+            transportMode={transportMode}
+            setTransportMode={setTransportMode}
+            eventDates={[...new Set(events_list.map((e) => e.start_date))]}
+          />
 
           <HomeLocationInput
             currentLocation={homeLocation}
