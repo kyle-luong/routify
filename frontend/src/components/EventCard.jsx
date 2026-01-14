@@ -10,9 +10,12 @@ export default function EventCard({ event, timeFormat }) {
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
       <h3 className="text-base font-medium text-slate-900">{event.title || 'Untitled Event'}</h3>
-      <p className="text-sm text-slate-600">
-        {formatTime(event.start)} – {formatTime(event.end)}
-      </p>
+      {event.start && event.end ? (
+        <p className="text-sm text-slate-600">
+          {formatTime(event.start)} – {formatTime(event.end)}
+        </p>
+      ) : null}
+
       {event.location && <p className="mt-1 text-sm text-slate-500">{event.location}</p>}
     </div>
   );
