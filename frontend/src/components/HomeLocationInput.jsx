@@ -261,7 +261,7 @@ export default function HomeLocationInput({
             placeholder={
               currentLocation
                 ? formatLocationForDisplay(currentLocation.location)
-                : 'Enter home address or starting point (optional)'
+                : 'Enter home address or starting point'
             }
             className="ml-6 flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-500 focus:outline-none"
             disabled={isGeocoding}
@@ -282,7 +282,7 @@ export default function HomeLocationInput({
             <button
               type="button"
               onClick={handleCurrentLocation}
-              className="rounded p-1 text-slate-400 hover:text-slate-900 active:scale-[0.98]"
+              className="rounded p-1 text-slate-400 hover:text-sky-600 active:scale-[0.98]"
               aria-label="Use current location"
               title="Use current location"
             >
