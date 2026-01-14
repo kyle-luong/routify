@@ -54,7 +54,7 @@ export default function CalendarPage() {
     return (
       <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-slate-50">
         <div className="flex items-center gap-3">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-sky-600" />
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 text-sky-600" />
           <span className="text-slate-600">Loading calendar...</span>
         </div>
       </div>
