@@ -7,6 +7,13 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from collections import defaultdict
 import time
 import asyncio
+import os
+import ipaddress
+
+# Trusted proxy IPs - only trust X-Forwarded-For from these
+TRUSTED_PROXIES = set(
+    ip.strip() for ip in os.getenv("TRUSTED_PROXIES", "127.0.0.1").split(",") if ip.strip()
+)
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
     def __init__(
@@ -14,40 +21,59 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         app,
         requests_per_minute: int = 60,
         requests_per_hour: int = 1000,
-        burst_limit: int = 10,  # Max requests per second
+        burst_limit: int = 10,
+        cleanup_interval: int = 300,
     ):
         super().__init__(app)
         self.requests_per_minute = requests_per_minute
         self.requests_per_hour = requests_per_hour
         self.burst_limit = burst_limit
-        
-        # Track requests: {ip: [(timestamp, count), ...]}
+        self.cleanup_interval = cleanup_interval
+
         self.minute_tracker: dict[str, list] = defaultdict(list)
         self.hour_tracker: dict[str, list] = defaultdict(list)
         self.second_tracker: dict[str, list] = defaultdict(list)
-        
-        # Lock for thread safety
+
         self._lock = asyncio.Lock()
+        self._last_cleanup = time.time()
+
+    def _is_valid_ip(self, ip: str) -> bool:
+        """Validate IP address format."""
+        try:
+            ipaddress.ip_address(ip)
+            return True
+        except ValueError:
+            return False
 
     def _get_client_ip(self, request: Request) -> str:
-        """Get client IP, handling proxies."""
-        # Check X-Forwarded-For header (from load balancers/proxies)
-        forwarded = request.headers.get("X-Forwarded-For")
-        if forwarded:
-            return forwarded.split(",")[0].strip()
-        
-        # Check X-Real-IP header
-        real_ip = request.headers.get("X-Real-IP")
-        if real_ip:
-            return real_ip
-        
-        # Fallback to direct connection
-        return request.client.host if request.client else "unknown"
+        """Get client IP, only trusting proxy headers from known proxies."""
+        direct_ip = request.client.host if request.client else "unknown"
+
+        # Only trust X-Forwarded-For if request comes from trusted proxy
+        if direct_ip in TRUSTED_PROXIES:
+            forwarded = request.headers.get("X-Forwarded-For")
+            if forwarded:
+                client_ip = forwarded.split(",")[0].strip()
+                if self._is_valid_ip(client_ip):
+                    return client_ip
+
+            real_ip = request.headers.get("X-Real-IP")
+            if real_ip and self._is_valid_ip(real_ip):
+                return real_ip
+
+        return direct_ip
 
     def _clean_old_entries(self, tracker: list, window_seconds: int, now: float) -> list:
         """Remove entries older than the time window."""
         cutoff = now - window_seconds
-        return [t for t in tracker if t > cutoff]
+        return [t for t in tracker if t >= cutoff]
+
+    def _cleanup_stale_ips(self):
+        """Remove IPs with empty tracker lists to prevent memory leak."""
+        for tracker in [self.second_tracker, self.minute_tracker, self.hour_tracker]:
+            empty_ips = [ip for ip, timestamps in tracker.items() if not timestamps]
+            for ip in empty_ips:
+                del tracker[ip]
 
     async def dispatch(self, request: Request, call_next):
         # Skip rate limiting for health checks
@@ -58,6 +84,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         now = time.time()
 
         async with self._lock:
+            # Periodic cleanup of stale IPs to prevent memory leak
+            if now - self._last_cleanup > self.cleanup_interval:
+                self._cleanup_stale_ips()
+                self._last_cleanup = now
+
             # Clean old entries
             self.second_tracker[client_ip] = self._clean_old_entries(
                 self.second_tracker[client_ip], 1, now

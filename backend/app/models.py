@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, Field, Relationship
 from sqlalchemy import Column
 from sqlalchemy.types import JSON
 from typing import List, Optional
-from datetime import date, time
+from datetime import date, time, datetime
 import uuid
 
 class SessionModel(SQLModel, table=True):
@@ -28,3 +28,12 @@ class EventModel(SQLModel, table=True):
 
     latitude: Optional[float]
     longitude: Optional[float]
+
+
+class ContactSubmission(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    email: str
+    subject: str
+    message: str
+    created_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
