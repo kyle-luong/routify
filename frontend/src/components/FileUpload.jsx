@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../lib/api';
+import { saveSession } from '../lib/session';
 
 export default function FileUpload() {
   const inputRef = useRef(null);
@@ -30,6 +31,7 @@ export default function FileUpload() {
 
       if (data.short_id) {
         setShortId(data.short_id);
+        saveSession(data.short_id);
       } else {
         setError('Upload failed. Please try again.');
       }

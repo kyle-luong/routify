@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import WeeklyCalendar from '../components/WeeklyCalendar';
 import { apiFetch } from '../lib/api';
+import { saveSession } from '../lib/session';
 
 export default function CalendarPage() {
   const { short_id } = useParams();
@@ -16,6 +17,9 @@ export default function CalendarPage() {
   // Fetch session events
   useEffect(() => {
     if (!short_id) return;
+
+    // Save session for navbar persistence
+    saveSession(short_id);
 
     setLoading(true);
     setError(null);
@@ -73,9 +77,9 @@ export default function CalendarPage() {
 
   return (
     <div className="flex h-[calc(100vh-64px)] flex-col bg-slate-50">
-      {/* Main content - full width calendar */}
-      <div className="flex flex-1 overflow-hidden p-4 md:p-6">
-        <div className="mx-auto flex h-full w-full max-w-7xl">
+      {/* Main content - centered calendar */}
+      <div className="flex flex-1 items-center justify-center overflow-hidden p-4 md:p-6">
+        <div className="flex h-full w-full max-w-5xl">
           <WeeklyCalendar
             events={events}
             selectedDate={selectedDate}

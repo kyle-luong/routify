@@ -8,6 +8,7 @@ import ScheduleHeader from '../components/ScheduleHeader';
 import ScheduleList from '../components/ScheduleList';
 import ShareableLink from '../components/ShareableLink';
 import { apiFetch, getCommuteTimes } from '../lib/api';
+import { saveSession } from '../lib/session';
 
 export default function SchedulePage() {
   const { short_id } = useParams();
@@ -32,6 +33,9 @@ export default function SchedulePage() {
   // Fetch session events
   useEffect(() => {
     if (!short_id) return;
+
+    // Save session for navbar persistence
+    saveSession(short_id);
 
     setLoading(true);
     setError(null);
