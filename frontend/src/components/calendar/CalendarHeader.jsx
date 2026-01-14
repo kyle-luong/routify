@@ -104,7 +104,7 @@ export default function CalendarHeader({
 
         {/* Date picker dropdown (rich overlay like ScheduleHeader) */}
         {showDatePicker && (
-          <div className="absolute top-full left-0 z-[120] mt-2 rounded-lg border border-slate-200 bg-white p-4 shadow-md">
+          <div className="absolute top-[40px] left-0 z-[120] rounded-lg border border-slate-200 bg-white p-4 shadow-md">
             <DayPicker
               mode="single"
               selected={selectedDate}

@@ -30,6 +30,16 @@ export default function WeeklyCalendar({
     return events.filter((event) => weekDates.includes(event.start_date));
   }, [events, weekStart]);
 
+  const weekEventDates = useMemo(() => {
+    return weekEvents.map((e) => e.start_date);
+  }, [weekEvents]);
+
+  // Also provide all event dates (from the full events prop) so date picker
+  // can show markers for the entire ICS, not just this week.
+  const allEventDates = useMemo(() => {
+    return events.map((e) => e.start_date);
+  }, [events]);
+
   // Calculate dynamic time range based on events in the week
   const { startHour, endHour } = useMemo(() => {
     if (weekEvents.length === 0) {
@@ -81,6 +91,7 @@ export default function WeeklyCalendar({
         weekStart={weekStart}
         shortId={shortId}
         onDateChange={onDateChange}
+        eventDates={allEventDates}
       />
 
       {/* Calendar grid - scrollable */}
