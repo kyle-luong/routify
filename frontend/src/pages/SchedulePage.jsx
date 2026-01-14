@@ -8,6 +8,7 @@ import ScheduleHeader from '../components/ScheduleHeader';
 import ScheduleList from '../components/ScheduleList';
 import ShareableLink from '../components/ShareableLink';
 import { apiFetch, getCommuteTimes } from '../lib/api';
+import { logger } from '../lib/logger';
 import { saveSession } from '../lib/session';
 
 export default function SchedulePage() {
@@ -79,7 +80,7 @@ export default function SchedulePage() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Failed to load events', err);
+        logger.error('Failed to load events', err);
         setError('Failed to load events.');
         setLoading(false);
         if (!selectedDate) setSelectedDate(new Date());
@@ -127,7 +128,7 @@ export default function SchedulePage() {
         setCommuteTimes(times);
       })
       .catch((err) => {
-        console.error('Failed to fetch commute times', err);
+        logger.error('Failed to fetch commute times', err);
         setCommuteTimes([]);
       });
   }, [filteredEvents_coords, transportMode]);

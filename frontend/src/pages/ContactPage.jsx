@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { apiFetch } from '../lib/api';
+import { logger } from '../lib/logger';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -29,7 +30,7 @@ export default function ContactPage() {
       setStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (err) {
-      console.error('Contact form error:', err);
+      logger.error('Contact form error:', err);
       setStatus('error');
       setErrorMessage('Failed to send message. Please try again later.');
     }

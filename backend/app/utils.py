@@ -3,16 +3,20 @@ from datetime import datetime, timedelta
 import calendar
 import googlemaps
 import os
+import re
 from dotenv import load_dotenv
+
+from app.schools import resolve_location
 
 load_dotenv()
 gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_KEY"))
 
 ICAL_TO_WEEKDAY = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"]
-ICAL_TO_PYDAY = {
-    "MO": 0, "TU": 1, "WE": 2, "TH": 3, "FR": 4, "SA": 5, "SU": 6,
-}
 WEEKDAY_ORDER = list(calendar.day_name)
+
+# Date bounds for validation (reasonable range for academic calendars)
+MIN_DATE_YEAR = 2020
+MAX_DATE_YEAR = 2030
 
 location_cache = {}
 
@@ -31,7 +35,13 @@ def parse_ics(file_content, school_location):
                 parts = dict(x.split("=") for x in line.value.split(";") if "=" in x)
                 if "UNTIL" in parts:
                     until = parts["UNTIL"]
-                    until_date = datetime.strptime(until, "%Y%m%dT%H%M%S").date() if "T" in until else datetime.strptime(until, "%Y%m%d").date()
+                    try:
+                        until_date = datetime.strptime(until, "%Y%m%dT%H%M%S").date() if "T" in until else datetime.strptime(until, "%Y%m%d").date()
+                        # Bounds check
+                        if until_date.year < MIN_DATE_YEAR or until_date.year > MAX_DATE_YEAR:
+                            until_date = None
+                    except ValueError:
+                        until_date = None
                 if "BYDAY" in parts:
                     day_codes = parts["BYDAY"].split(",")
 
@@ -43,34 +53,37 @@ def parse_ics(file_content, school_location):
         # Keep original location
         original_location = event.location or ""
 
-        # Clean for geocoding
+        # Clean for geocoding (remove trailing room numbers, etc.)
         cleaned_location = original_location
         if cleaned_location:
-            import re
             cleaned_location = re.sub(r'[^a-zA-Z\s,.-]+$', '', cleaned_location).strip()
 
-        if cleaned_location.strip():
-            location_key = f"{cleaned_location}, {school_location}"
-        else:
-            location_key = ''
-            
-        if 'physics' in location_key.lower():
-                location_key = '382 McCormick Rd, Charlottesville, VA 22904, USA'
+        # Resolve location using school config
+        location_key, bias_coords = resolve_location(cleaned_location, school_location)
 
         # Cache geocoding
         if location_key in location_cache:
             lat, lng = location_cache[location_key]
+        elif not location_key:
+            lat = lng = None
         else:
             try:
-                if location_key == '':
-                    lat = lng = None
+                # Build geocode params with optional bias
+                geocode_params = {"address": location_key}
+                if bias_coords:
+                    # Use bounds to bias results toward school area
+                    delta = 0.05  # ~5km radius
+                    geocode_params["bounds"] = {
+                        "southwest": {"lat": bias_coords["lat"] - delta, "lng": bias_coords["lng"] - delta},
+                        "northeast": {"lat": bias_coords["lat"] + delta, "lng": bias_coords["lng"] + delta},
+                    }
+
+                geo = gmaps.geocode(**geocode_params)
+                if geo:
+                    lat = geo[0]["geometry"]["location"]["lat"]
+                    lng = geo[0]["geometry"]["location"]["lng"]
                 else:
-                    geo = gmaps.geocode(location_key)
-                    if geo:
-                        lat = geo[0]["geometry"]["location"]["lat"]
-                        lng = geo[0]["geometry"]["location"]["lng"]
-                    else:
-                        lat = lng = None
+                    lat = lng = None
             except Exception:
                 lat = lng = None
             location_cache[location_key] = (lat, lng)

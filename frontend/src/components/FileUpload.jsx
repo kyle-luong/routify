@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../lib/api';
+import { logger } from '../lib/logger';
 import { saveSession } from '../lib/session';
 
 export default function FileUpload() {
@@ -36,8 +37,8 @@ export default function FileUpload() {
         setError('Upload failed. Please try again.');
       }
     } catch (err) {
-      console.error('Upload failed:', err);
-      setError('Something went wrong. Please try again.');
+      logger.error('Upload failed:', err);
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setIsUploading(false);
     }

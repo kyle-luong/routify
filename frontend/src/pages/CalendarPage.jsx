@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import WeeklyCalendar from '../components/WeeklyCalendar';
 import { apiFetch } from '../lib/api';
+import { logger } from '../lib/logger';
 import { saveSession } from '../lib/session';
 
 export default function CalendarPage() {
@@ -48,7 +49,7 @@ export default function CalendarPage() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Failed to load events', err);
+        logger.error('Failed to load events', err);
         setError('Failed to load events.');
         setLoading(false);
       });
