@@ -70,7 +70,7 @@ class DistanceMatrixRequest(BaseModel):
 
 
 @router.post("/sessions")
-async def create_session(file: UploadFile = File(...), school_location: str = Form(...)):
+async def create_session(file: UploadFile = File(...), school_location: str = Form(None)):
     # Validate content type
     if file.content_type and file.content_type not in ["text/calendar", "application/octet-stream"]:
         raise HTTPException(status_code=400, detail="Invalid file type. Please upload an ICS file.")

@@ -21,7 +21,6 @@ export default function FileUpload() {
     setError('');
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('school_location', 'University of Virginia');
 
     try {
       const data = await apiFetch('/api/sessions', {
