@@ -4,9 +4,9 @@ import { formatHour } from './utils';
 /**
  * Left time column showing hour labels
  */
-export default function TimeColumn({ timeSlots, timeFormat }) {
+export default function TimeColumn({ timeSlots, timeFormat, endHour }) {
   return (
-    <div className="sticky left-0 z-10 w-16 flex-shrink-0 border-r border-slate-200/70 bg-white/80 backdrop-blur-sm">
+    <div className="sticky left-0 z-10 w-16 flex-shrink-0 border-r border-slate-200/70 bg-transparent backdrop-blur-sm">
       {/* Empty header cell - sticky */}
       <div className="sticky top-0 z-20 h-14 border-b border-slate-200 bg-slate-50" />
 

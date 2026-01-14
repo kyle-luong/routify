@@ -14,14 +14,14 @@ export default function CalendarEvent({ event, layoutInfo, startHour, timeFormat
       style={style}
       title={`${event.title}\n${hasValidTime ? `${formatTime(event.start, timeFormat)} - ${formatTime(event.end, timeFormat)}\n` : ''}${event.location || ''}`}
     >
-      <div className="leading-tight font-medium">
+      <div className="leading-tight font-small ">
         {hasValidTime
           ? `${formatTime(event.start, timeFormat)} - ${formatTime(event.end, timeFormat)}`
           : ''}
       </div>
       <div className="mt-px truncate leading-tight font-bold">{event.title}</div>
       {event.location && (
-        <div className="mt-px text-[11px] leading-tight font-medium text-slate-700">
+        <div className="mt-px text-[11px] leading-tight font-small  text-slate-700">
           {event.location}
         </div>
       )}

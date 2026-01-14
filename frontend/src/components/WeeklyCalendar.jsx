@@ -68,7 +68,9 @@ export default function WeeklyCalendar({
   // Time slots based on dynamic range
   const timeSlots = useMemo(() => {
     const slots = [];
-    for (let hour = startHour; hour <= endHour; hour++) {
+    // Render slots from startHour (inclusive) to endHour (exclusive)
+    // so the grid ends exactly at endHour without an extra margin row.
+    for (let hour = startHour; hour < endHour; hour++) {
       slots.push(hour);
     }
     return slots;
@@ -96,7 +98,7 @@ export default function WeeklyCalendar({
 
       {/* Calendar grid - scrollable */}
       <div className="flex flex-1 overflow-auto">
-        <TimeColumn timeSlots={timeSlots} timeFormat={timeFormat} />
+        <TimeColumn timeSlots={timeSlots} timeFormat={timeFormat} endHour={endHour} />
 
         {/* Days grid */}
         <div className="flex flex-1">
@@ -109,6 +111,7 @@ export default function WeeklyCalendar({
                 events={eventsByDay[dayStr] || []}
                 timeSlots={timeSlots}
                 startHour={startHour}
+                endHour={endHour}
                 timeFormat={timeFormat}
                 selectedDate={selectedDate}
               />

@@ -72,31 +72,30 @@ export default function CalendarHeader({
   return (
     <div className="relative z-20 flex items-center justify-between border-b border-slate-200/80 bg-white/80 px-4 py-3 backdrop-blur-sm">
       <style>{calendarStyles}</style>
-      {/* Left: Navigation */}
-      <div className="relative flex items-center gap-2">
+      {/* Left: Navigation */}      <div className="relative flex items-center">
         <button
           onClick={goToPrevWeek}
-          className="rounded-lg p-2 text-sky-600 hover:bg-slate-100"
+           className="rounded-lg p-2 text-slate-400 hover:text-sky-600"
           aria-label="Previous week"
         >
-          <FiChevronLeft className="h-5 w-5" />
+          <FiChevronLeft className="h-7 w-7" />
         </button>
         <button
           onClick={goToNextWeek}
-          className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"
+          className="rounded-lg p-2 text-slate-400 hover:text-sky-600"
           aria-label="Next week"
         >
-          <FiChevronRight className="h-5 w-5" />
+          <FiChevronRight className="h-7 w-7" />
         </button>
         <button
           onClick={goToToday}
-          className="ml-2 rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="mx-2 rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-sky-600"
         >
           Today
         </button>
         <button
           onClick={() => setShowDatePicker(!showDatePicker)}
-          className="rounded-lg border border-slate-300 p-1.5 text-slate-600 hover:bg-slate-50"
+          className="ml-2 rounded-lg border border-slate-300 p-2 text-slate-500 hover:text-sky-600 text-sm"
           title="Pick a date"
         >
           <FiCalendar className="h-4 w-4" />
