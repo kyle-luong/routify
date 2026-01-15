@@ -17,6 +17,14 @@ const founders = [
     linkedin: 'https://www.linkedin.com/in/kylewl/',
     github: 'https://github.com/kyle-luong',
   },
+  {
+    name: 'Jonathan Lam',
+    title: 'Software Engineer',
+    image: '/team/jonathan.jpg',
+    bio: 'solver',
+    linkedin: 'https://www.linkedin.com/in/jonathanlam2/',
+    github: 'https://github.com/Jonuhthan',
+  },
 ];
 
 function FounderCard({ founder }) {
@@ -74,7 +82,7 @@ export default function AboutPage() {
         </div>
 
         <h2 className="mb-6 text-center text-2xl font-semibold text-slate-900">Meet the Team</h2>
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-3">
           {founders.map((founder) => (
             <FounderCard key={founder.name} founder={founder} />
           ))}
