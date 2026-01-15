@@ -2,20 +2,20 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const founders = [
   {
-    name: 'Alex Chen',
-    title: 'Co-Founder & CEO',
-    image: '/team/founder1.jpg',
-    bio: 'Alex brings over a decade of experience in product development and a passion for creating tools that simplify daily life. Previously led product teams at several successful startups.',
-    linkedin: 'https://linkedin.com',
-    github: 'https://github.com',
+    name: 'Pratik Shrestha',
+    title: 'Software Engineer',
+    image: '/team/pratik.jpg',
+    bio: 'thinker',
+    linkedin: 'https://www.linkedin.com/in/pishrestha',
+    github: 'https://github.com/PiShrestha',
   },
   {
-    name: 'Jordan Rivera',
-    title: 'Co-Founder & CTO',
-    image: '/team/founder2.jpg',
-    bio: 'Jordan is a full-stack engineer with deep expertise in mapping technologies and calendar integrations. Believes that the best software feels invisible.',
-    linkedin: 'https://linkedin.com',
-    github: 'https://github.com',
+    name: 'Kyle Luong',
+    title: 'Software Engineer',
+    image: '/team/kyle.jpg',
+    bio: 'creator',
+    linkedin: 'https://www.linkedin.com/in/kylewl/',
+    github: 'https://github.com/kyle-luong',
   },
 ];
 
