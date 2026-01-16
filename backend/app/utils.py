@@ -121,6 +121,10 @@ def geocode_location(address: str, bias_coords: dict = None) -> dict:
     if not address:
         return {"lat": None, "lng": None, "confidence": 0, "raw": None}
 
+    # Use a local reference to the global gmaps to make mocking easier
+    from app import utils 
+    client = utils.gmaps
+
     try:
         if gmaps is None:
             logger.debug("Google Maps client not configured; skipping geocode")

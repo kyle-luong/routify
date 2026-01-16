@@ -4,6 +4,8 @@ Pytest configuration and fixtures for calview backend tests.
 This module provides shared fixtures for testing the FastAPI backend,
 including database setup, mock clients, and sample data.
 """
+os.environ["GOOGLE_MAPS_KEY"] = "fake-test-key"
+os.environ["TESTING"] = "true"
 
 import sys
 import os
