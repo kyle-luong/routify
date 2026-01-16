@@ -5,20 +5,20 @@ const colorPalette = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
 
 function clearMapRoutes(map) {
   if (!map || !map.isStyleLoaded()) return;
-  
+
   try {
     const style = map.getStyle();
     if (!style) return;
 
     const layers = style.layers || [];
-    const routeLayers = layers.filter(layer => layer.id && layer.id.includes('route-'));
-    
-    routeLayers.forEach(layer => {
+    const routeLayers = layers.filter((layer) => layer.id && layer.id.includes('route-'));
+
+    routeLayers.forEach((layer) => {
       if (map.getLayer(layer.id)) map.removeLayer(layer.id);
     });
 
     const sources = style.sources || {};
-    Object.keys(sources).forEach(sourceId => {
+    Object.keys(sources).forEach((sourceId) => {
       if (sourceId.includes('route-') && map.getSource(sourceId)) {
         map.removeSource(sourceId);
       }
@@ -28,14 +28,20 @@ function clearMapRoutes(map) {
   }
 }
 
-function MapBoxRoutes({ map, segments = [], selectedPair, transportMode = 'walking', isMapLoaded }) {
+function MapBoxRoutes({
+  map,
+  segments = [],
+  selectedPair,
+  transportMode = 'walking',
+  isMapLoaded,
+}) {
   useEffect(() => {
     if (!map || !isMapLoaded) return;
 
     clearMapRoutes(map);
     if (!Array.isArray(segments) || segments.length === 0) return;
 
-    let bounds = new mapboxgl.LngLatBounds();
+    const bounds = new mapboxgl.LngLatBounds();
 
     segments.forEach((pair, i) => {
       if (!pair[0] || !pair[1]) return;
@@ -47,8 +53,8 @@ function MapBoxRoutes({ map, segments = [], selectedPair, transportMode = 'walki
       const url = `https://api.mapbox.com/directions/v5/mapbox/${transportMode}/${origin};${destination}?geometries=geojson&access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`;
 
       fetch(url)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (!data.routes?.length) return;
 
           const route = data.routes[0];
@@ -81,13 +87,13 @@ function MapBoxRoutes({ map, segments = [], selectedPair, transportMode = 'walki
             paint: { 'line-color': color, 'line-width': width, 'line-opacity': opacity },
           });
 
-          route.geometry.coordinates.forEach(coord => bounds.extend(coord));
+          route.geometry.coordinates.forEach((coord) => bounds.extend(coord));
 
           if (i === segments.length - 1 && !bounds.isEmpty()) {
             map.fitBounds(bounds, { padding: 50 });
           }
         })
-        .catch(err => console.error('Error fetching route.', err));
+        .catch((err) => console.error('Error fetching route.', err));
     });
 
     return () => clearMapRoutes(map);

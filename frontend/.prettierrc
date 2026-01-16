@@ -19,8 +19,5 @@
     "^\\./(?=.*/)(?!/?$)",
     "^\\.(?!/?$)",
     "^\\./?$"
-  ],
-  "importOrderSortSpecifiers": true,
-  "importOrderMergeDuplicateImports": true,
-  "importOrderCombineTypeAndValueImports": true
+  ]
 }

@@ -110,12 +110,15 @@ export default function WeeklyCalendar({
         eventDates={allEventDates}
       />
 
-      {/* Calendar grid - scrollable */}
-      <div className="flex flex-1 overflow-auto">
+      {/* Calendar grid - scrollable, horizontal scroll with snap on mobile */}
+      <div className="flex flex-1 overflow-auto sm:overflow-auto">
         <TimeColumn timeSlots={timeSlots} timeFormat={timeFormat} />
 
-        {/* Days grid */}
-        <div className="flex flex-1">
+        {/* Days grid - horizontal scroll with snap on mobile */}
+        <div
+          className="flex flex-1 snap-x snap-mandatory overflow-x-auto scroll-smooth sm:snap-none sm:overflow-x-visible"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
           {weekDays.map((day) => {
             const dayStr = format(day, 'yyyy-MM-dd');
             return (

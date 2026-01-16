@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
+
 import { logger } from '../../lib/logger';
 
 function createLabeledMarker(event, labelNumber = null) {

@@ -7,20 +7,13 @@ import { calculateEventColumns } from './utils';
 /**
  * Single day column showing the day header and events
  */
-export default function DayColumn({
-  day,
-  events,
-  timeSlots,
-  startHour,
-  timeFormat,
-  selectedDate,
-}) {
+export default function DayColumn({ day, events, timeSlots, startHour, timeFormat, selectedDate }) {
   const isToday = isSameDay(day, new Date());
   const isSelected = isSameDay(day, selectedDate);
   const dayLayouts = calculateEventColumns(events);
 
   return (
-    <div className="flex min-w-[140px] flex-1 flex-col border-r border-slate-200 last:border-r-0">
+    <div className="flex min-w-[85vw] flex-1 snap-start flex-col border-r border-slate-200 last:border-r-0 sm:min-w-[140px] sm:snap-align-none">
       {/* Day header - sticky */}
       <div
         className={`sticky top-0 z-10 flex h-14 flex-col items-center justify-center border-b border-slate-200 ${

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import { apiFetch } from '../lib/api';
 import { logger } from '../lib/logger';
 
@@ -95,7 +96,7 @@ export default function ContactPage() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-lg border border-slate-300 px-4 py-2 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full rounded-lg border border-slate-300 px-4 py-2 transition-colors focus:border-sky-500 focus:ring-1 focus:ring-sky-500 focus:outline-none"
                     placeholder="Your name"
                   />
                 </div>
@@ -111,7 +112,7 @@ export default function ContactPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full rounded-lg border border-slate-300 px-4 py-2 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full rounded-lg border border-slate-300 px-4 py-2 transition-colors focus:border-sky-500 focus:ring-1 focus:ring-sky-500 focus:outline-none"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -128,7 +129,7 @@ export default function ContactPage() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 transition-colors focus:border-sky-500 focus:ring-1 focus:ring-sky-500 focus:outline-none"
                   placeholder="What's this about?"
                 />
               </div>
@@ -144,7 +145,7 @@ export default function ContactPage() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full resize-none rounded-lg border border-slate-300 px-4 py-2 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="w-full resize-none rounded-lg border border-slate-300 px-4 py-2 transition-colors focus:border-sky-500 focus:ring-1 focus:ring-sky-500 focus:outline-none"
                   placeholder="Tell us more..."
                 />
               </div>

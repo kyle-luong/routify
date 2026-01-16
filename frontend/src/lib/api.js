@@ -49,4 +49,3 @@ export async function getCommuteTimes(origins, destinations, mode) {
   });
   return data.results;
 }
-

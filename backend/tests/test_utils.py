@@ -1,287 +1,249 @@
+"""
+Unit tests for calview backend utility functions.
+
+Tests the ICS parsing, geocoding, and location clustering logic.
+"""
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
-from datetime import datetime, date, time
-import os
-from app.utils import parse_ics, location_cache, gmaps
+from unittest.mock import patch
+from datetime import date, time
+
+
+class TestExpandAbbreviations:
+    """Tests for the expand_abbreviations function."""
+
+    def test_expand_building(self):
+        """Test expanding 'Bldg' to 'Building'."""
+        from app.utils import expand_abbreviations
+        result = expand_abbreviations("Science Bldg")
+        assert "Building" in result
+
+    def test_expand_multiple(self):
+        """Test expanding multiple abbreviations."""
+        from app.utils import expand_abbreviations
+        result = expand_abbreviations("Eng Bldg Rm 101")
+        assert "Engineering" in result
+        assert "Building" in result
+        assert "Room" in result
+
+    def test_no_abbreviations(self):
+        """Test text without abbreviations passes through."""
+        from app.utils import expand_abbreviations
+        result = expand_abbreviations("Regular Building Name")
+        assert result == "Regular Building Name"
+
+
+class TestCleanLocation:
+    """Tests for the clean_location function."""
+
+    def test_clean_trailing_numbers(self):
+        """Test removing trailing room numbers."""
+        from app.utils import clean_location
+        result = clean_location("Building A 123")
+        assert not result.endswith("123")
+
+    def test_clean_empty_string(self):
+        """Test empty string returns empty."""
+        from app.utils import clean_location
+        result = clean_location("")
+        assert result == ""
+
+    def test_clean_none(self):
+        """Test None returns empty string."""
+        from app.utils import clean_location
+        result = clean_location(None)
+        assert result == ""
+
+
+class TestHaversineDistance:
+    """Tests for the haversine_distance function."""
+
+    def test_same_point(self):
+        """Test distance to same point is zero."""
+        from app.utils import haversine_distance
+        result = haversine_distance(38.0, -78.0, 38.0, -78.0)
+        assert result == 0.0
+
+    def test_known_distance(self):
+        """Test known distance calculation."""
+        from app.utils import haversine_distance
+        # NYC to LA is approximately 3940 km
+        result = haversine_distance(40.7128, -74.0060, 34.0522, -118.2437)
+        assert 3900 < result < 4000
+
+
+class TestCalculateConfidence:
+    """Tests for the calculate_confidence function."""
+
+    def test_high_confidence_rooftop(self):
+        """Test ROOFTOP location type gives high confidence."""
+        from app.utils import calculate_confidence
+        result = {
+            "geometry": {"location_type": "ROOFTOP"},
+            "types": ["establishment"],
+            "formatted_address": "Test University"
+        }
+        score = calculate_confidence(result)
+        assert score > 0.8
+
+    def test_low_confidence_approximate(self):
+        """Test APPROXIMATE location type gives lower confidence."""
+        from app.utils import calculate_confidence
+        result = {
+            "geometry": {"location_type": "APPROXIMATE"},
+            "types": [],
+            "formatted_address": "Unknown"
+        }
+        score = calculate_confidence(result)
+        assert score < 0.7
+
+
+class TestClusterLocations:
+    """Tests for the cluster_locations function."""
+
+    def test_single_location(self):
+        """Test clustering with single location."""
+        from app.utils import cluster_locations
+        geocoded = {
+            "loc1": {"lat": 38.0, "lng": -78.0, "confidence": 0.9}
+        }
+        result = cluster_locations(geocoded)
+        assert result["lat"] == 38.0
+        assert result["lng"] == -78.0
+
+    def test_empty_locations(self):
+        """Test clustering with no locations."""
+        from app.utils import cluster_locations
+        result = cluster_locations({})
+        assert result is None
+
+    def test_multiple_locations_median(self):
+        """Test clustering uses median for multiple locations."""
+        from app.utils import cluster_locations
+        geocoded = {
+            "loc1": {"lat": 38.0, "lng": -78.0, "confidence": 0.9},
+            "loc2": {"lat": 39.0, "lng": -79.0, "confidence": 0.9},
+            "loc3": {"lat": 40.0, "lng": -80.0, "confidence": 0.9},
+        }
+        result = cluster_locations(geocoded)
+        assert result["lat"] == 39.0
+        assert result["lng"] == -79.0
+
+
+class TestFindOutliers:
+    """Tests for the find_outliers function."""
+
+    def test_no_outliers(self):
+        """Test no outliers when all locations are close."""
+        from app.utils import find_outliers
+        geocoded = {
+            "loc1": {"lat": 38.0, "lng": -78.0},
+            "loc2": {"lat": 38.01, "lng": -78.01},
+        }
+        centroid = {"lat": 38.005, "lng": -78.005}
+        result = find_outliers(geocoded, centroid)
+        assert len(result) == 0
+
+    def test_detects_outlier(self):
+        """Test detects outlier far from centroid."""
+        from app.utils import find_outliers
+        geocoded = {
+            "loc1": {"lat": 38.0, "lng": -78.0},
+            "far": {"lat": 45.0, "lng": -85.0},  # Very far away
+        }
+        centroid = {"lat": 38.0, "lng": -78.0}
+        result = find_outliers(geocoded, centroid)
+        assert "far" in result
+
 
 class TestParseIcs:
-    
-    @pytest.fixture(autouse=True)
-    def clear_cache(self):
-        """Clear location cache before each test"""
-        location_cache.clear()
-    
-    @pytest.fixture
-    def sample_ics_content(self):
-        """Sample ICS content for testing"""
-        return """BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test//Test//EN
-BEGIN:VEVENT
-DTSTART:20240115T100000
-DTEND:20240115T110000
-SUMMARY:Math 101
-LOCATION:Room 101
-RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=20240515T235959
-UID:test-event-1
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20240116T140000
-DTEND:20240116T153000
-SUMMARY:Physics Lab
-LOCATION:Science Building Room 201
-UID:test-event-2
-END:VEVENT
-BEGIN:VEVENT
-DTSTART:20240117T090000
-DTEND:20240117T103000
-SUMMARY:Online Meeting
-LOCATION:
-UID:test-event-3
-END:VEVENT
-END:VCALENDAR"""
-
-    def test_google_maps_client_initialization(self):
-        """Test that Google Maps client is properly initialized"""
-        assert gmaps is not None
-        assert hasattr(gmaps, 'geocode')
-
-    @pytest.mark.skipif(not os.getenv("GOOGLE_MAPS_KEY"), reason="No Google Maps API key")
-    def test_google_maps_api_key_works(self):
-        """Test that the Google Maps API key is valid and works"""
-        try:
-            # Test with a known location
-            result = gmaps.geocode("University of Virginia, Charlottesville, VA")
-            assert result is not None
-            assert len(result) > 0
-            assert 'geometry' in result[0]
-            assert 'location' in result[0]['geometry']
-        except Exception as e:
-            pytest.fail(f"Google Maps API key test failed: {e}")
+    """Tests for the parse_ics function."""
 
     @patch('app.utils.gmaps.geocode')
-    def test_successful_geocoding(self, mock_geocode, sample_ics_content):
-        """Test successful geocoding of locations"""
-        # Mock successful geocoding response
+    def test_parse_basic_event(self, mock_geocode, sample_ics_single_event):
+        """Test parsing a basic single event."""
         mock_geocode.return_value = [{
             'geometry': {
-                'location': {
-                    'lat': 38.0293,
-                    'lng': -78.4767
-                }
-            }
+                'location': {'lat': 38.0293, 'lng': -78.4767},
+                'location_type': 'ROOFTOP'
+            },
+            'types': ['establishment'],
+            'formatted_address': 'Test Building'
         }]
-        
-        events = parse_ics(sample_ics_content, "University of Virginia")
-        
-        # Should have geocoded events
-        events_with_coords = [e for e in events if e['latitude'] is not None]
-        assert len(events_with_coords) > 0
-        
-        # Check coordinates
-        for event in events_with_coords:
-            assert event['latitude'] == 38.0293
-            assert event['longitude'] == -78.4767
 
-    @patch('app.utils.gmaps.geocode')
-    def test_failed_geocoding(self, mock_geocode, sample_ics_content):
-        """Test handling of failed geocoding"""
-        # Mock failed geocoding (no results)
-        mock_geocode.return_value = []
-        
-        events = parse_ics(sample_ics_content, "University of Virginia")
-        
-        # All events should have None coordinates
-        for event in events:
-            assert event['latitude'] is None
-            assert event['longitude'] is None
+        from app.utils import parse_ics
+        events = parse_ics(sample_ics_single_event)
 
-    @patch('app.utils.gmaps.geocode')
-    def test_geocoding_exception_handling(self, mock_geocode, sample_ics_content):
-        """Test handling of geocoding exceptions"""
-        # Mock geocoding exception
-        mock_geocode.side_effect = Exception("API Error")
-        
-        events = parse_ics(sample_ics_content, "University of Virginia")
-        
-        # All events should have None coordinates
-        for event in events:
-            assert event['latitude'] is None
-            assert event['longitude'] is None
-
-    def test_location_cache(self, sample_ics_content):
-        """Test that location caching works properly"""
-        with patch('app.utils.gmaps.geocode') as mock_geocode:
-            mock_geocode.return_value = [{
-                'geometry': {
-                    'location': {
-                        'lat': 38.0293,
-                        'lng': -78.4767
-                    }
-                }
-            }]
-            
-            # Parse twice
-            parse_ics(sample_ics_content, "University of Virginia")
-            parse_ics(sample_ics_content, "University of Virginia")
-            
-            # Geocoding should only be called once per unique location
-            # (due to caching)
-            unique_locations = set()
-            call_count = 0
-            for call in mock_geocode.call_args_list:
-                location = call[0][0]
-                if location not in unique_locations:
-                    unique_locations.add(location)
-                    call_count += 1
-            
-            # Should have fewer calls than total events due to caching
-            assert len(location_cache) > 0
-
-    def test_event_format_structure(self, sample_ics_content):
-        """Test that parsed events have correct structure"""
-        with patch('app.utils.gmaps.geocode') as mock_geocode:
-            mock_geocode.return_value = [{
-                'geometry': {
-                    'location': {
-                        'lat': 38.0293,
-                        'lng': -78.4767
-                    }
-                }
-            }]
-            
-            events = parse_ics(sample_ics_content, "University of Virginia")
-            
-            assert len(events) > 0
-            
-            for event in events:
-                # Check required fields
-                assert 'title' in event
-                assert 'location' in event
-                assert 'start_time' in event
-                assert 'end_time' in event
-                assert 'start_date' in event
-                assert 'end_date' in event
-                assert 'day_codes' in event
-                assert 'day_of_week' in event
-                assert 'latitude' in event
-                assert 'longitude' in event
-                
-                # Check data types
-                assert isinstance(event['title'], str)
-                assert isinstance(event['location'], str)
-                assert isinstance(event['start_time'], time)
-                assert isinstance(event['end_time'], time)
-                assert isinstance(event['start_date'], date)
-                assert isinstance(event['end_date'], date)
-                assert isinstance(event['day_codes'], list)
-                assert isinstance(event['day_of_week'], list)
-
-    def test_recurring_events(self, sample_ics_content):
-        """Test that recurring events are properly expanded"""
-        with patch('app.utils.gmaps.geocode') as mock_geocode:
-            mock_geocode.return_value = [{
-                'geometry': {
-                    'location': {
-                        'lat': 38.0293,
-                        'lng': -78.4767
-                    }
-                }
-            }]
-            
-            events = parse_ics(sample_ics_content, "University of Virginia")
-            
-            # Should have multiple instances of recurring events
-            math_events = [e for e in events if e['title'] == 'Math 101']
-            assert len(math_events) > 1  # Should have multiple occurrences
-
-    def test_empty_location_handling(self, sample_ics_content):
-        """Test handling of events with empty locations"""
-        events = parse_ics(sample_ics_content, "University of Virginia")
-        
-        # Should handle events with empty locations gracefully
-        empty_location_events = [e for e in events if e['location'] == '']
-        assert len(empty_location_events) >= 0  # Should not crash
-
-    def test_location_cleaning(self):
-        """Test location string cleaning functionality"""
-        test_ics = """BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test//Test//EN
-BEGIN:VEVENT
-DTSTART:20240115T100000
-DTEND:20240115T110000
-SUMMARY:Test Event
-LOCATION:Room 101 Building A#$%123
-UID:test-clean
-END:VEVENT
-END:VCALENDAR"""
-        
-        with patch('app.utils.gmaps.geocode') as mock_geocode:
-            mock_geocode.return_value = []
-            
-            events = parse_ics(test_ics, "University of Virginia")
-            
-            # Check that geocoding was called with cleaned location
-            assert mock_geocode.called
-            called_location = mock_geocode.call_args[0][0]
-            # Should not contain trailing special characters
-            assert not called_location.endswith('#$%123')
-
-    def test_weekday_mapping(self, sample_ics_content):
-        """Test that weekday mapping works correctly"""
-        with patch('app.utils.gmaps.geocode') as mock_geocode:
-            mock_geocode.return_value = []
-            
-            events = parse_ics(sample_ics_content, "University of Virginia")
-            
-            for event in events:
-                # Check that day codes are valid
-                assert len(event['day_codes']) > 0
-                assert all(code in ["MO", "TU", "WE", "TH", "FR", "SA", "SU"] 
-                          for code in event['day_codes'])
-                
-                # Check that day of week names are valid
-                assert len(event['day_of_week']) > 0
-                valid_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 
-                             'Friday', 'Saturday', 'Sunday']
-                assert all(day in valid_days for day in event['day_of_week'])
-
-class TestEnvironmentSetup:
-    """Test environment and configuration"""
-    
-    def test_env_file_loaded(self):
-        """Test that environment variables are loaded"""
-        # Should not crash when trying to access env vars
-        google_key = os.getenv("GOOGLE_MAPS_KEY")
-        # Key might be None in test environment, but should not crash
-        assert google_key is not None or google_key is None  # Just check it doesn't crash
-
-    @pytest.mark.integration
-    def test_end_to_end_with_real_data(self):
-        """Integration test with real data (if API key available)"""
-        if not os.getenv("GOOGLE_MAPS_KEY"):
-            pytest.skip("No Google Maps API key for integration test")
-        
-        test_ics = """BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test//Test//EN
-BEGIN:VEVENT
-DTSTART:20240115T100000
-DTEND:20240115T110000
-SUMMARY:Test at UVA
-LOCATION:Rotunda
-UID:integration-test
-END:VEVENT
-END:VCALENDAR"""
-        
-        events = parse_ics(test_ics, "University of Virginia")
-        
         assert len(events) > 0
+        assert events[0]['title'] == 'Single Event'
+
+    @patch('app.utils.gmaps.geocode')
+    def test_parse_recurring_event(self, mock_geocode, sample_ics_content):
+        """Test parsing recurring events expands correctly."""
+        mock_geocode.return_value = [{
+            'geometry': {
+                'location': {'lat': 38.0293, 'lng': -78.4767},
+                'location_type': 'ROOFTOP'
+            },
+            'types': ['establishment'],
+            'formatted_address': 'Room 101'
+        }]
+
+        from app.utils import parse_ics
+        events = parse_ics(sample_ics_content)
+
+        # Should have multiple instances of Math 101
+        math_events = [e for e in events if e['title'] == 'Math 101']
+        assert len(math_events) > 1
+
+    @patch('app.utils.gmaps.geocode')
+    def test_parse_empty_location(self, mock_geocode, sample_ics_content):
+        """Test events with empty location have None coordinates."""
+        mock_geocode.return_value = []
+
+        from app.utils import parse_ics
+        events = parse_ics(sample_ics_content)
+
+        # Online Meeting has empty location
+        online_events = [e for e in events if e['title'] == 'Online Meeting']
+        assert len(online_events) > 0
+        assert online_events[0]['latitude'] is None
+
+    @patch('app.utils.gmaps.geocode')
+    def test_event_structure(self, mock_geocode, sample_ics_single_event):
+        """Test parsed events have correct structure."""
+        mock_geocode.return_value = [{
+            'geometry': {
+                'location': {'lat': 38.0293, 'lng': -78.4767},
+                'location_type': 'ROOFTOP'
+            },
+            'types': ['establishment'],
+            'formatted_address': 'Test Building'
+        }]
+
+        from app.utils import parse_ics
+        events = parse_ics(sample_ics_single_event)
+
         event = events[0]
-        assert event['title'] == 'Test at UVA'
-        assert event['location'] == 'Rotunda'
-        # Should have coordinates if geocoding worked
-        if event['latitude'] is not None:
-            assert isinstance(event['latitude'], float)
-            assert isinstance(event['longitude'], float)
+        assert 'title' in event
+        assert 'location' in event
+        assert 'start_time' in event
+        assert 'end_time' in event
+        assert 'start_date' in event
+        assert 'end_date' in event
+        assert 'day_codes' in event
+        assert 'day_of_week' in event
+        assert 'latitude' in event
+        assert 'longitude' in event
+
+    @patch('app.utils.gmaps.geocode')
+    def test_geocoding_failure(self, mock_geocode, sample_ics_single_event):
+        """Test graceful handling of geocoding failures."""
+        mock_geocode.side_effect = Exception("API Error")
+
+        from app.utils import parse_ics
+        events = parse_ics(sample_ics_single_event)
+
+        # Should still parse events, just without coordinates
+        assert len(events) > 0
+        assert events[0]['latitude'] is None

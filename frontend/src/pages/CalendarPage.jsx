@@ -57,7 +57,7 @@ export default function CalendarPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-slate-50">
+      <div className="flex min-h-[calc(100vh-48px)] items-center justify-center bg-slate-50 sm:min-h-[calc(100vh-56px)]">
         <div className="flex items-center gap-3">
           <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 text-sky-600" />
           <span className="text-slate-600">Loading calendar...</span>
@@ -68,7 +68,7 @@ export default function CalendarPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-slate-50">
+      <div className="flex min-h-[calc(100vh-48px)] items-center justify-center bg-slate-50 sm:min-h-[calc(100vh-56px)]">
         <div className="rounded-lg border border-red-200 bg-red-50 px-6 py-4 text-red-700">
           {error}
         </div>
@@ -77,9 +77,9 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col bg-slate-50">
+    <div className="flex h-[calc(100vh-48px)] flex-col bg-slate-50 sm:h-[calc(100vh-56px)]">
       {/* Main content - centered calendar */}
-      <div className="flex flex-1 items-center justify-center overflow-hidden p-4 md:p-6">
+      <div className="flex flex-1 items-center justify-center overflow-hidden p-2 sm:p-4 md:p-6">
         <div className="flex h-full w-full max-w-5xl">
           <WeeklyCalendar
             events={events}

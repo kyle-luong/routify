@@ -15,7 +15,7 @@ const faqs = [
   {
     question: 'How do I share my schedule?',
     answer:
-      'After uploading your calendar, you\'ll receive a unique shareable link. Copy this link and send it to anyone you want to share your schedule with. They\'ll be able to view your events on both a calendar and map view.',
+      "After uploading your calendar, you'll receive a unique shareable link. Copy this link and send it to anyone you want to share your schedule with. They'll be able to view your events on both a calendar and map view.",
   },
   {
     question: 'How long are shared schedules available?',
@@ -57,7 +57,7 @@ function FAQItem({ faq, isOpen, onToggle }) {
         </span>
       </button>
       {isOpen && (
-        <div className="pb-4 pr-8 text-slate-600">
+        <div className="pr-8 pb-4 text-slate-600">
           <p>{faq.answer}</p>
         </div>
       )}
