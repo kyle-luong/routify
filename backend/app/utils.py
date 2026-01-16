@@ -9,7 +9,7 @@ import math
 from dotenv import load_dotenv
 
 load_dotenv()
-print("Loaded .env file for configuration.", len(os.environ), "env vars available.")
+print("Loaded .env file for configuration.", len(os.getenv("GOOGLE_MAPS_KEY")))
 gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_KEY"))
 logger = logging.getLogger(__name__)
 
