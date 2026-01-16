@@ -41,6 +41,21 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
+      - name: Export GOOGLE_MAPS_KEY secret to environment
+        run: |
+          # Write secret (if present) into the job environment for later steps.
+          # GitHub Actions masks secrets in logs.
+          echo "GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_KEY }}" >> $GITHUB_ENV
+
+      - name: Ensure GOOGLE_MAPS_KEY fallback for tests
+        run: |
+          if [ -z "${GOOGLE_MAPS_KEY}" ]; then
+            echo "GOOGLE_MAPS_KEY=fake-test-key" >> $GITHUB_ENV
+            echo "No real GOOGLE_MAPS_KEY found; using fake-test-key for CI tests"
+          else
+            echo "GOOGLE_MAPS_KEY present in environment"
+          fi
+
       - name: Debug GOOGLE_MAPS_KEY presence
         run: |
           python - <<'PY'
@@ -54,7 +69,6 @@ jobs:
       - name: Run tests
         env:
           DATABASE_URL: sqlite:///./test.db
-          GOOGLE_MAPS_KEY: ${{ secrets.GOOGLE_MAPS_KEY }}
           HASHID_SALT: test-salt
         run: PYTHONPATH=$PWD pytest tests/ -v --tb=short
 
@@ -142,7 +156,7 @@ jobs:
   e2e-frontend:
     name: E2E Tests Frontend
     runs-on: ubuntu-latest
-    if: false  # Set to true when e2e tests are ready
+    if: false # Set to true when e2e tests are ready
     defaults:
       run:
         working-directory: frontend
@@ -239,7 +253,14 @@ jobs:
   deploy-backend:
     name: Deploy Backend to EC2
     runs-on: ubuntu-latest
-    needs: [test-backend, lint-frontend, format-frontend, test-frontend, deploy-frontend]
+    needs:
+      [
+        test-backend,
+        lint-frontend,
+        format-frontend,
+        test-frontend,
+        deploy-frontend,
+      ]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Checkout code
