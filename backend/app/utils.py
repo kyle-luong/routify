@@ -9,8 +9,13 @@ import math
 from dotenv import load_dotenv
 
 load_dotenv()
-print("Loaded .env file for configuration.", len(os.getenv("GOOGLE_MAPS_KEY")))
-gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_KEY"))
+GOOGLE_MAPS_KEY = os.getenv("GOOGLE_MAPS_KEY")
+print("Loaded .env file for configuration.", len(GOOGLE_MAPS_KEY) if GOOGLE_MAPS_KEY else 0)
+
+if GOOGLE_MAPS_KEY:
+    gmaps = googlemaps.Client(key=GOOGLE_MAPS_KEY)
+else:
+    gmaps = None
 logger = logging.getLogger(__name__)
 
 ICAL_TO_WEEKDAY = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"]
@@ -117,6 +122,10 @@ def geocode_location(address: str, bias_coords: dict = None) -> dict:
         return {"lat": None, "lng": None, "confidence": 0, "raw": None}
 
     try:
+        if gmaps is None:
+            logger.debug("Google Maps client not configured; skipping geocode")
+            return {"lat": None, "lng": None, "confidence": 0, "raw": None}
+
         params = {"address": address}
         if bias_coords:
             delta = 0.05  # ~5km radius

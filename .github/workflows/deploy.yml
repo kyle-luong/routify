@@ -41,6 +41,16 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
+      - name: Debug GOOGLE_MAPS_KEY presence
+        run: |
+          python - <<'PY'
+          import os
+          v = os.getenv("GOOGLE_MAPS_KEY")
+          print("GOOGLE_MAPS_KEY present:", bool(v))
+          print("type:", type(v).__name__)
+          print("length:", len(v) if v else 0)
+          PY
+
       - name: Run tests
         env:
           DATABASE_URL: sqlite:///./test.db
