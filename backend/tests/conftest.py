@@ -7,10 +7,6 @@ including database setup, mock clients, and sample data.
 
 import sys
 import os
-
-os.environ["GOOGLE_MAPS_KEY"] = "fake-test-key"
-os.environ["TESTING"] = "true"
-
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 from contextlib import contextmanager
