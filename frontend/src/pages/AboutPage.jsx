@@ -11,7 +11,7 @@ const founders = [
   },
   {
     name: 'Kyle Luong',
-    title: 'Software Engineer',
+    title: 'Lead Software Engineer',
     image: '/team/kyle.jpg',
     bio: 'creator',
     linkedin: 'https://www.linkedin.com/in/kylewl/',
@@ -76,8 +76,8 @@ export default function AboutPage() {
         <div className="mb-12 text-center">
           <h1 className="mb-4 text-4xl font-bold text-slate-900">About calview</h1>
           <p className="mx-auto max-w-2xl text-lg text-slate-600">
-            We're on a mission to help people visualize their schedules and navigate their days
-            with ease. calview transforms your calendar into a shareable, map-aware experience.
+            We're on a mission to help people visualize their schedules and navigate their days with
+            ease. calview transforms your calendar into a shareable, map-aware experience.
           </p>
         </div>
 

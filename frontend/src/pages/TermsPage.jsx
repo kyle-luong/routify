@@ -11,9 +11,9 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-3 text-xl font-semibold text-slate-900">1. Acceptance of Terms</h2>
             <p className="text-slate-600">
-              By accessing or using calview, you agree to be bound by these Terms of Service. If
-              you do not agree to these terms, please do not use our service. We reserve the right
-              to modify these terms at any time, and your continued use of the service constitutes
+              By accessing or using calview, you agree to be bound by these Terms of Service. If you
+              do not agree to these terms, please do not use our service. We reserve the right to
+              modify these terms at any time, and your continued use of the service constitutes
               acceptance of any changes.
             </p>
           </section>
@@ -44,9 +44,9 @@ export default function TermsPage() {
             <h2 className="mb-3 text-xl font-semibold text-slate-900">4. Intellectual Property</h2>
             <p className="text-slate-600">
               The calview service, including its design, features, and content, is owned by us and
-              protected by intellectual property laws. You retain ownership of any calendar data
-              you upload, but grant us a limited license to process and display that data as part
-              of providing the service.
+              protected by intellectual property laws. You retain ownership of any calendar data you
+              upload, but grant us a limited license to process and display that data as part of
+              providing the service.
             </p>
           </section>
 
@@ -62,7 +62,9 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-xl font-semibold text-slate-900">6. Limitation of Liability</h2>
+            <h2 className="mb-3 text-xl font-semibold text-slate-900">
+              6. Limitation of Liability
+            </h2>
             <p className="text-slate-600">
               To the maximum extent permitted by law, calview and its operators shall not be liable
               for any indirect, incidental, special, consequential, or punitive damages, including

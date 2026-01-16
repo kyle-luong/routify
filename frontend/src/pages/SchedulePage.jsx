@@ -142,7 +142,7 @@ export default function SchedulePage() {
       Number.isFinite(homeLocation.longitude) &&
       Number.isFinite(homeLocation.latitude)
     ) {
-      if (filteredEvents_coords.length == 0) {
+      if (filteredEvents_coords.length === 0) {
         singles.push(homeLocation);
       } else {
         segs.push([homeLocation, filteredEvents_coords[0]]);
@@ -163,10 +163,11 @@ export default function SchedulePage() {
   const handleClearHome = () => setHomeLocation(null);
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] items-start justify-center bg-slate-50 px-4 py-6 md:px-8">
-      <div className="flex h-full w-full max-w-7xl flex-col gap-6 lg:flex-row">
-        {/* Left: Schedule card */}
-        <div className="relative flex h-auto w-full shrink-0 flex-col space-y-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-md lg:h-[82vh] lg:w-[450px]">
+    <div className="flex min-h-[calc(100vh-48px)] items-start justify-center bg-slate-50 px-3 py-4 sm:min-h-[calc(100vh-56px)] sm:px-4 sm:py-6 md:px-8">
+      {/* On mobile: flex-col-reverse shows map first (top), then schedule list below */}
+      <div className="flex h-full w-full max-w-7xl flex-col-reverse gap-6 lg:flex-row">
+        {/* Left: Schedule card (appears below map on mobile) */}
+        <div className="relative flex h-auto w-full shrink-0 flex-col space-y-4 overflow-hidden rounded-xl border border-slate-200 bg-white p-4 shadow-md sm:p-6 lg:h-[82vh] lg:w-[450px]">
           <ScheduleHeader
             selectedDate={selectedDate || new Date()}
             setSelectedDate={setSelectedDate}
@@ -192,7 +193,7 @@ export default function SchedulePage() {
           {short_id && <ShareableLink shortId={short_id} />}
         </div>
 
-        {/* Right: Map */}
+        {/* Right: Map (appears first/top on mobile due to flex-col-reverse) */}
         <div className="flex h-[50vh] flex-1 items-center justify-center lg:h-[82vh]">
           <div className="flex h-full w-full items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-sm text-slate-500">
             {loading && <div>Loading...</div>}

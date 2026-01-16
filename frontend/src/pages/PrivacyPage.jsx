@@ -30,7 +30,9 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-xl font-semibold text-slate-900">3. How We Use Your Information</h2>
+            <h2 className="mb-3 text-xl font-semibold text-slate-900">
+              3. How We Use Your Information
+            </h2>
             <p className="mb-3 text-slate-600">We use the information we collect to:</p>
             <ul className="list-inside list-disc space-y-2 text-slate-600">
               <li>Provide and maintain our calendar visualization service</li>
@@ -54,9 +56,8 @@ export default function PrivacyPage() {
             <h2 className="mb-3 text-xl font-semibold text-slate-900">5. Data Security</h2>
             <p className="text-slate-600">
               We implement appropriate technical and organizational measures to protect your
-              personal data against unauthorized access, alteration, disclosure, or destruction.
-              All data is encrypted in transit using TLS and at rest using industry-standard
-              encryption.
+              personal data against unauthorized access, alteration, disclosure, or destruction. All
+              data is encrypted in transit using TLS and at rest using industry-standard encryption.
             </p>
           </section>
 
@@ -64,8 +65,8 @@ export default function PrivacyPage() {
             <h2 className="mb-3 text-xl font-semibold text-slate-900">6. Third-Party Services</h2>
             <p className="text-slate-600">
               We use third-party services for mapping functionality and analytics. These services
-              may collect anonymized usage data in accordance with their own privacy policies. We
-              do not sell your personal data to third parties.
+              may collect anonymized usage data in accordance with their own privacy policies. We do
+              not sell your personal data to third parties.
             </p>
           </section>
 

@@ -3,7 +3,6 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/Layout';
-
 // Eagerly load main pages
 import HomePage from './pages/HomePage';
 import SchedulePage from './pages/SchedulePage';

@@ -3,7 +3,7 @@ import EventCard from './EventCard';
 export default function ScheduleList({ events, timeFormat, commuteTimes }) {
   return (
     <div className="h-full overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      {events.length == 0 ? (
+      {events.length === 0 ? (
         <div className="flex h-full items-center justify-center">
           <p className="text-sm text-slate-500">No events for this day.</p>
         </div>

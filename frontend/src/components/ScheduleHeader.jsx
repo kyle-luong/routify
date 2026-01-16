@@ -83,9 +83,9 @@ export default function ScheduleHeader({
         <div className="flex space-x-3">
           <div className="flex space-x-2 rounded-md bg-slate-100 px-2 py-1">
             {[
-              ['walking', <FaWalking />],
-              ['cycling', <FaBicycle />],
-              ['driving', <FaCar />],
+              ['walking', <FaWalking key="walk-icon" />],
+              ['cycling', <FaBicycle key="bike-icon" />],
+              ['driving', <FaCar key="car-icon" />],
             ].map(([mode, icon]) => (
               <button
                 key={mode}
