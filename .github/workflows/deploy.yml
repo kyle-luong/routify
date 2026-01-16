@@ -42,11 +42,11 @@ jobs:
           pip install pytest pytest-cov
 
       - name: Run tests
-        run: PYTHONPATH=$PWD pytest tests/ -v --tb=short
         env:
           DATABASE_URL: sqlite:///./test.db
           GOOGLE_MAPS_KEY: ${{ secrets.GOOGLE_MAPS_KEY }}
           HASHID_SALT: test-salt
+        run: PYTHONPATH=$PWD pytest tests/ -v --tb=short
 
   # ============================================
   # Lint Frontend
