@@ -21,6 +21,7 @@ jobs:
   test-backend:
     name: Test Backend
     runs-on: ubuntu-latest
+    environment: production
     defaults:
       run:
         working-directory: backend
@@ -41,31 +42,6 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      - name: Export GOOGLE_MAPS_KEY secret to environment
-        run: |
-          # Write secret (if present) into the job environment for later steps.
-          # GitHub Actions masks secrets in logs.
-          echo "GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_KEY }}" >> $GITHUB_ENV
-
-      - name: Ensure GOOGLE_MAPS_KEY fallback for tests
-        run: |
-          if [ -z "${GOOGLE_MAPS_KEY}" ]; then
-            echo "GOOGLE_MAPS_KEY=fake-test-key" >> $GITHUB_ENV
-            echo "No real GOOGLE_MAPS_KEY found; using fake-test-key for CI tests"
-          else
-            echo "GOOGLE_MAPS_KEY present in environment"
-          fi
-
-      - name: Debug GOOGLE_MAPS_KEY presence
-        run: |
-          python - <<'PY'
-          import os
-          v = os.getenv("GOOGLE_MAPS_KEY")
-          print("GOOGLE_MAPS_KEY present:", bool(v))
-          print("type:", type(v).__name__)
-          print("length:", len(v) if v else 0)
-          PY
-
       - name: Run tests
         env:
           DATABASE_URL: sqlite:///./test.db
@@ -78,6 +54,7 @@ jobs:
   lint-frontend:
     name: Lint Frontend
     runs-on: ubuntu-latest
+    environment: production
     defaults:
       run:
         working-directory: frontend
@@ -104,6 +81,7 @@ jobs:
   format-frontend:
     name: Format Check Frontend
     runs-on: ubuntu-latest
+    environment: production
     defaults:
       run:
         working-directory: frontend
@@ -130,6 +108,7 @@ jobs:
   test-frontend:
     name: Test Frontend
     runs-on: ubuntu-latest
+    environment: production
     defaults:
       run:
         working-directory: frontend
@@ -156,6 +135,7 @@ jobs:
   e2e-frontend:
     name: E2E Tests Frontend
     runs-on: ubuntu-latest
+    environment: production
     if: false # Set to true when e2e tests are ready
     defaults:
       run:
@@ -201,6 +181,7 @@ jobs:
   deploy-frontend:
     name: Deploy Frontend to S3
     runs-on: ubuntu-latest
+    environment: production
     needs: [test-backend, lint-frontend, format-frontend, test-frontend]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     defaults:
@@ -253,6 +234,7 @@ jobs:
   deploy-backend:
     name: Deploy Backend to EC2
     runs-on: ubuntu-latest
+    environment: production
     needs:
       [
         test-backend,
