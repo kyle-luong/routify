@@ -157,7 +157,7 @@ class TestContactEndpoint:
 class TestDistanceMatrixEndpoint:
     """Tests for the distance matrix endpoint."""
 
-    def test_distance_matrix_invalid_mode(self, test_client):
+    def test_distance_matrix_invalid_mode(self, test_client, mock_google_maps):
         """Test distance matrix rejects invalid transport mode."""
         data = {
             "origins": [{"lat": 38.0, "lng": -78.0}],
@@ -169,7 +169,7 @@ class TestDistanceMatrixEndpoint:
         assert response.status_code == 400
         assert "Invalid mode" in response.json()["detail"]
 
-    def test_distance_matrix_too_many_origins(self, test_client):
+    def test_distance_matrix_too_many_origins(self, test_client, mock_google_maps):
         """Test distance matrix rejects too many origins."""
         data = {
             "origins": [{"lat": 38.0 + i * 0.01, "lng": -78.0} for i in range(26)],

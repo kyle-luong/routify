@@ -74,6 +74,9 @@ def mock_db_session(test_engine, monkeypatch):
 def mock_google_maps():
     """
     Mock Google Maps client for geocoding operations.
+    
+    Patches app.utils.gmaps with a MagicMock to ensure tests work
+    regardless of whether GOOGLE_MAPS_KEY is set in the environment.
     """
     mock_response = [{
         'geometry': {
@@ -84,9 +87,11 @@ def mock_google_maps():
         'formatted_address': 'University of Virginia, Charlottesville, VA'
     }]
 
-    with patch('app.utils.gmaps') as mock_gmaps:
-        mock_gmaps.geocode.return_value = mock_response
-        yield mock_gmaps
+    mock_client = MagicMock()
+    mock_client.geocode.return_value = mock_response
+    
+    with patch('app.utils.gmaps', mock_client):
+        yield mock_client
 
 
 @pytest.fixture
@@ -107,17 +112,21 @@ def test_client(mock_db_session, mock_google_maps):
 @pytest.fixture
 def mock_google_maps_empty():
     """Mock Google Maps client that returns no results."""
-    with patch('app.utils.gmaps') as mock_gmaps:
-        mock_gmaps.geocode.return_value = []
-        yield mock_gmaps
+    mock_client = MagicMock()
+    mock_client.geocode.return_value = []
+    
+    with patch('app.utils.gmaps', mock_client):
+        yield mock_client
 
 
 @pytest.fixture
 def mock_google_maps_error():
     """Mock Google Maps client that raises an exception."""
-    with patch('app.utils.gmaps') as mock_gmaps:
-        mock_gmaps.geocode.side_effect = Exception("API Error")
-        yield mock_gmaps
+    mock_client = MagicMock()
+    mock_client.geocode.side_effect = Exception("API Error")
+    
+    with patch('app.utils.gmaps', mock_client):
+        yield mock_client
 
 
 @pytest.fixture

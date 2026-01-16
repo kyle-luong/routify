@@ -46,6 +46,8 @@ jobs:
         env:
           DATABASE_URL: sqlite:///./test.db
           HASHID_SALT: test-salt
+          GOOGLE_MAPS_KEY: ${{ secrets.GOOGLE_MAPS_KEY }}
+          TESTING: "true"
         run: PYTHONPATH=$PWD pytest tests/ -v --tb=short
 
   # ============================================

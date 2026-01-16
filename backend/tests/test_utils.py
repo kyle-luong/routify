@@ -159,10 +159,10 @@ class TestFindOutliers:
 class TestParseIcs:
     """Tests for the parse_ics function."""
 
-    @patch('app.utils.gmaps.geocode')
-    def test_parse_basic_event(self, mock_geocode, sample_ics_single_event):
+    @patch('app.utils.gmaps')
+    def test_parse_basic_event(self, mock_gmaps, sample_ics_single_event):
         """Test parsing a basic single event."""
-        mock_geocode.return_value = [{
+        mock_gmaps.geocode.return_value = [{
             'geometry': {
                 'location': {'lat': 38.0293, 'lng': -78.4767},
                 'location_type': 'ROOFTOP'
@@ -177,10 +177,10 @@ class TestParseIcs:
         assert len(events) > 0
         assert events[0]['title'] == 'Single Event'
 
-    @patch('app.utils.gmaps.geocode')
-    def test_parse_recurring_event(self, mock_geocode, sample_ics_content):
+    @patch('app.utils.gmaps')
+    def test_parse_recurring_event(self, mock_gmaps, sample_ics_content):
         """Test parsing recurring events expands correctly."""
-        mock_geocode.return_value = [{
+        mock_gmaps.geocode.return_value = [{
             'geometry': {
                 'location': {'lat': 38.0293, 'lng': -78.4767},
                 'location_type': 'ROOFTOP'
@@ -196,10 +196,10 @@ class TestParseIcs:
         math_events = [e for e in events if e['title'] == 'Math 101']
         assert len(math_events) > 1
 
-    @patch('app.utils.gmaps.geocode')
-    def test_parse_empty_location(self, mock_geocode, sample_ics_content):
+    @patch('app.utils.gmaps')
+    def test_parse_empty_location(self, mock_gmaps, sample_ics_content):
         """Test events with empty location have None coordinates."""
-        mock_geocode.return_value = []
+        mock_gmaps.geocode.return_value = []
 
         from app.utils import parse_ics
         events = parse_ics(sample_ics_content)
@@ -209,10 +209,10 @@ class TestParseIcs:
         assert len(online_events) > 0
         assert online_events[0]['latitude'] is None
 
-    @patch('app.utils.gmaps.geocode')
-    def test_event_structure(self, mock_geocode, sample_ics_single_event):
+    @patch('app.utils.gmaps')
+    def test_event_structure(self, mock_gmaps, sample_ics_single_event):
         """Test parsed events have correct structure."""
-        mock_geocode.return_value = [{
+        mock_gmaps.geocode.return_value = [{
             'geometry': {
                 'location': {'lat': 38.0293, 'lng': -78.4767},
                 'location_type': 'ROOFTOP'
@@ -236,10 +236,10 @@ class TestParseIcs:
         assert 'latitude' in event
         assert 'longitude' in event
 
-    @patch('app.utils.gmaps.geocode')
-    def test_geocoding_failure(self, mock_geocode, sample_ics_single_event):
+    @patch('app.utils.gmaps')
+    def test_geocoding_failure(self, mock_gmaps, sample_ics_single_event):
         """Test graceful handling of geocoding failures."""
-        mock_geocode.side_effect = Exception("API Error")
+        mock_gmaps.geocode.side_effect = Exception("API Error")
 
         from app.utils import parse_ics
         events = parse_ics(sample_ics_single_event)

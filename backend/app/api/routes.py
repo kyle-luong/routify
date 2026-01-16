@@ -161,15 +161,17 @@ async def submit_contact(request: ContactRequest):
 @router.post("/distance-matrix")
 async def get_distance_matrix(request: DistanceMatrixRequest):
     """Get travel times from Google Maps Distance Matrix API."""
-    if not GOOGLE_MAPS_KEY:
-        raise HTTPException(status_code=500, detail="Maps API not configured")
+    # Validate request parameters first (before checking API key)
+    # This ensures validation errors return 400 even in test environments
+    valid_modes = ["walking", "driving", "bicycling", "transit"]
+    if request.mode not in valid_modes:
+        raise HTTPException(status_code=400, detail=f"Invalid mode. Use: {', '.join(valid_modes)}")
 
     if len(request.origins) > 25 or len(request.destinations) > 25:
         raise HTTPException(status_code=400, detail="Maximum 25 origins/destinations allowed")
 
-    valid_modes = ["walking", "driving", "bicycling", "transit"]
-    if request.mode not in valid_modes:
-        raise HTTPException(status_code=400, detail=f"Invalid mode. Use: {', '.join(valid_modes)}")
+    if not GOOGLE_MAPS_KEY:
+        raise HTTPException(status_code=500, detail="Maps API not configured")
 
     origins = "|".join(f"{o.lat},{o.lng}" for o in request.origins)
     destinations = "|".join(f"{d.lat},{d.lng}" for d in request.destinations)
