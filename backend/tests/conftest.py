@@ -19,16 +19,14 @@ from fastapi.testclient import TestClient
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Use in-memory SQLite for tests
-TEST_DATABASE_URL = "sqlite:///:memory:"
+TEST_DATABASE_URL = "sqlite:///./test.db"
 
 
 @pytest.fixture(scope="session")
 def test_engine():
     """Create a test database engine using in-memory SQLite."""
     engine = create_engine(
-        TEST_DATABASE_URL,
-        connect_args={"check_same_thread": False},
-        echo=False,
+        TEST_DATABASE_URL
     )
     # Import models to register them
     from app.models import SessionModel, EventModel, ContactSubmission
@@ -98,6 +96,7 @@ def test_client(mock_db_session, mock_google_maps):
     """
     os.environ.setdefault("HASHID_SALT", "test-salt-for-testing")
     os.environ.setdefault("GOOGLE_MAPS_KEY", "fake-test-key")
+    os.environ.setdefault("TESTING", "true")
 
     from app.main import app
 

@@ -76,6 +76,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 del tracker[ip]
 
     async def dispatch(self, request: Request, call_next):
+        if os.getenv("TESTING") == "true":
+            print("Testing mode - skipping SlowDownMiddleware")
+            return await call_next(request)
+        
         # Skip rate limiting for health checks
         if request.url.path in ["/health", "/api/health"]:
             return await call_next(request)
@@ -152,6 +156,13 @@ class SlowDownMiddleware(BaseHTTPMiddleware):
         self.tracker: dict[str, list] = defaultdict(list)
 
     async def dispatch(self, request: Request, call_next):
+        if os.getenv("TESTING") == "true":
+            print("Testing mode - skipping SlowDownMiddleware")
+            return await call_next(request) 
+        
+        if request.url.path in ["/health", "/api/health"]:
+            return await call_next(request)
+    
         client_ip = request.client.host if request.client else "unknown"
         now = time.time()
         

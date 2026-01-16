@@ -41,4 +41,5 @@ app.include_router(routes.router, prefix="/api")
 async def health_check():
     return {"status": "healthy"}
 
-init_db()
+if os.getenv("TESTING") != "true":
+    init_db()
